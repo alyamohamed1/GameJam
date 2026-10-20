@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://w0nk5ib4vtvi"]
+
+[ext_resource type="Script" path="res://devices/interactable.gd" id="1_int"]
+
+[sub_resource type="RectangleShape2D" id="RectShape_1"]
+size = Vector2(24, 24)
+
+[node name="Interactable" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_int")
+
+[node name="Visual" type="ColorRect" parent="."]
+offset_left = -12.0
+offset_top = -12.0
+offset_right = 12.0
+offset_bottom = 12.0
+color = Color(0.95, 0.6, 0.15, 1)
+mouse_filter = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectShape_1")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -40.0
+offset_top = -30.0
+offset_right = 40.0
+offset_bottom = -16.0
+text = "[E] Thing"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8

@@ -12,6 +12,7 @@ const DOORWAY_WIDTH := 48.0
 const WALL_COLOR := Color(0.08, 0.08, 0.1, 1.0)
 
 @onready var walls_root: Node2D = $Walls
+@onready var zones_root: Node2D = $Zones
 @onready var burglar: Node2D = $Burglar
 
 func _ready() -> void:
@@ -23,9 +24,18 @@ func _ready() -> void:
 		cam.position_smoothing_speed = 8.0
 		burglar.add_child(cam)
 		cam.make_current()
+		_connect_zones()
 	else:
 		var desk := DESK_SCENE.instantiate()
 		get_tree().root.call_deferred("add_child", desk)
+
+func _connect_zones() -> void:
+	for z in zones_root.get_children():
+		if z.has_signal("interacted"):
+			z.interacted.connect(_on_zone_interacted.bind(z))
+
+func _on_zone_interacted(_user: Node, zone: Node) -> void:
+	print("[host] interacted: %s" % zone.label)
 
 # Build perimeter + interior walls with doorway gaps. Each wall segment is a
 # StaticBody2D with a RectangleShape2D collider plus a matching ColorRect so
