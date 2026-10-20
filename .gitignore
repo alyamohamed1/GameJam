@@ -1,0 +1,11 @@
+# Godot
+game-jam/.godot/
+game-jam/.import/
+*.translation
+
+# macOS
+.DS_Store
+
+# Builds
+game-jam/export_presets.cfg
+game-jam/builds/

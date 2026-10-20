@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://deskstage0"]
+
+[ext_resource type="Script" path="res://player2/desk.gd" id="1_desk"]
+
+[node name="Desk" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1_desk")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 8.0
+offset_top = 4.0
+offset_right = 200.0
+offset_bottom = 20.0
+text = "MONITOR 1 — KITCHEN"
+
+[node name="Monitor" type="SubViewportContainer" parent="."]
+offset_left = 8.0
+offset_top = 24.0
+offset_right = 248.0
+offset_bottom = 159.0
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Monitor"]
+handle_input_locally = false
+size = Vector2i(240, 135)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="Monitor/SubViewport"]
+position = Vector2(240, 135)

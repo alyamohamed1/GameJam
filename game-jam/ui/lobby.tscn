@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://lobbystage0"]
+
+[ext_resource type="Script" uid="uid://oxdn0hxmb5rh" path="res://ui/lobby.gd" id="1_lobby"]
+
+[node name="Lobby" type="Control" unique_id=1449861937]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_lobby")
+
+[node name="Panel" type="Panel" parent="." unique_id=2012071484]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 60.0
+offset_right = 360.0
+offset_bottom = 220.0
+
+[node name="VBox" type="VBoxContainer" parent="Panel" unique_id=1474914870]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 232.0
+offset_bottom = 152.0
+
+[node name="Title" type="Label" parent="Panel/VBox" unique_id=1222915092]
+layout_mode = 2
+text = "HEIST — Stage 0"
+
+[node name="HostBtn" type="Button" parent="Panel/VBox" unique_id=808187940]
+layout_mode = 2
+text = "Host"
+
+[node name="IPEdit" type="LineEdit" parent="Panel/VBox" unique_id=1911242261]
+layout_mode = 2
+text = "127.0.0.1"
+placeholder_text = "host IP"
+
+[node name="JoinBtn" type="Button" parent="Panel/VBox" unique_id=236719277]
+layout_mode = 2
+text = "Join"
+
+[node name="Status" type="Label" parent="Panel/VBox" unique_id=1367157553]
+layout_mode = 2
+text = "idle"
