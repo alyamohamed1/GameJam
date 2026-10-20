@@ -6,6 +6,7 @@ extends CanvasLayer
 @onready var _button: Button = $Root/Panel/VBox/Restart
 
 func _ready() -> void:
+	SFX.play("alarm")
 	_button.pressed.connect(_on_restart)
 	_button.disabled = not multiplayer.is_server()
 	if _button.disabled:

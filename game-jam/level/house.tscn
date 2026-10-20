@@ -27,7 +27,7 @@ size = Vector2(17, 149.875)
 size = Vector2(17, 95.9375)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tgh7j"]
-size = Vector2(110, 18)
+size = Vector2(94, 18)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_drmjt"]
 size = Vector2(110, 18)
@@ -36,7 +36,7 @@ size = Vector2(110, 18)
 size = Vector2(14, 18)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_d5g2o"]
-size = Vector2(18, 169)
+size = Vector2(18, 132)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y1kxv"]
 size = Vector2(18, 99.5)
@@ -150,7 +150,7 @@ size = Vector2(49.875, 44.875)
 size = Vector2(77.9375, 82)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rggjd"]
-size = Vector2(52, 150.5)
+size = Vector2(52, 122)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kdqon"]
 size = Vector2(59.96875, 76.25)
@@ -235,7 +235,7 @@ shape = SubResource("RectangleShape2D_0rvqu")
 position = Vector2(600, 10)
 
 [node name="Shape2" type="CollisionShape2D" parent="Walls/SampleWall_TopPerimeter8" unique_id=1159100104]
-position = Vector2(90, 245)
+position = Vector2(98, 245)
 shape = SubResource("RectangleShape2D_tgh7j")
 
 [node name="SampleWall_TopPerimeter53" type="StaticBody2D" parent="Walls" unique_id=1727180936]
@@ -256,7 +256,7 @@ shape = SubResource("RectangleShape2D_2jv3f")
 position = Vector2(600, 10)
 
 [node name="Shape2" type="CollisionShape2D" parent="Walls/SampleWall_TopPerimeter9" unique_id=287179836]
-position = Vector2(136, 339.5)
+position = Vector2(136, 321)
 shape = SubResource("RectangleShape2D_d5g2o")
 
 [node name="SampleWall_TopPerimeter15" type="StaticBody2D" parent="Walls" unique_id=1683030397]
@@ -522,7 +522,7 @@ shape = SubResource("RectangleShape2D_ojqe1")
 position = Vector2(600, 10)
 
 [node name="Shape2" type="CollisionShape2D" parent="Walls/SampleWall_TopPerimeter55" unique_id=746202678]
-position = Vector2(96, 331.25)
+position = Vector2(96, 317)
 shape = SubResource("RectangleShape2D_rggjd")
 
 [node name="SampleWall_TopPerimeter34" type="StaticBody2D" parent="Walls" unique_id=202637345]
@@ -628,7 +628,9 @@ position = Vector2(846, 232)
 label = "USB Port"
 
 [node name="BedroomDoor" parent="Zones" unique_id=1548158876 instance=ExtResource("5_door")]
-position = Vector2(660, 439)
+position = Vector2(660.00006, 439.00003)
+rotation = 0.0024473988
+scale = Vector2(1.0000114, 0.9975346)
 label = "Bedroom Door"
 
 [node name="Safe" parent="Zones" unique_id=811582994 instance=ExtResource("3_int")]

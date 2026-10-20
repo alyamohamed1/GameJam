@@ -15,11 +15,18 @@ extends CanvasLayer
 @onready var hc_cipher_edit: LineEdit = $Root/HomeComputer/VBox/CipherEdit
 
 var _shift: int = 0
+var _decrypt_played: bool = false
 
 func _ready() -> void:
-	feeder_btn.pressed.connect(Game.request_feeder)
-	hc_minus.pressed.connect(func() -> void: _change_shift(-1))
-	hc_plus.pressed.connect(func() -> void: _change_shift(1))
+	feeder_btn.pressed.connect(func() -> void:
+		SFX.play("p2_click")
+		Game.request_feeder())
+	hc_minus.pressed.connect(func() -> void:
+		SFX.play("p2_click")
+		_change_shift(-1))
+	hc_plus.pressed.connect(func() -> void:
+		SFX.play("p2_click")
+		_change_shift(1))
 	hc_cipher_edit.text_changed.connect(func(_t: String) -> void: _update_cipher_display())
 	Game.phase_changed.connect(_on_phase_changed)
 	_update_cipher_display()
@@ -39,8 +46,18 @@ func _change_shift(delta: int) -> void:
 
 func _update_cipher_display() -> void:
 	hc_shift_label.text = "shift %d" % _shift
-	# Decrypt whatever P2 typed by shifting backward.
-	hc_decoded.text = Cipher.shift(hc_cipher_edit.text, -_shift)
+	# Decrypt whatever P2 typed by shifting forward (the cipher in this
+	# game was produced by shifting plaintext backward).
+	var decoded := Cipher.shift(hc_cipher_edit.text, _shift)
+	hc_decoded.text = decoded
+	# Chime when the decoded text contains the plaintext safe-code words.
+	# One-shot per unique match so it doesn't spam on every keystroke.
+	if decoded.to_lower().replace(" ", "") == "onetwosix":
+		if not _decrypt_played:
+			SFX.play("p2_decrypt")
+			_decrypt_played = true
+	else:
+		_decrypt_played = false
 
 func _on_phase_changed(p: int) -> void:
 	_apply_phase(p)
@@ -55,6 +72,11 @@ func _apply_phase(p: int) -> void:
 		# Green CRT tint on all monitors once blackout starts.
 		m.modulate = Color(0.4, 1.0, 0.5) if night_vision else Color(1, 1, 1)
 	hc_locked.visible = not all_live
+	# Soft static loop while any monitor is still NO SIGNAL.
+	if all_live:
+		SFX.stop_loop("static")
+	else:
+		SFX.loop("static", "p2_static", -22.0)
 
 func _phase_name(p: int) -> String:
 	match p:

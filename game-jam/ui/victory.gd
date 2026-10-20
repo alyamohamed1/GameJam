@@ -6,6 +6,7 @@ extends CanvasLayer
 @onready var _button: Button = $Root/Panel/VBox/Restart
 
 func _ready() -> void:
+	SFX.play("victory")
 	var t: int = int(Game.run_time)
 	_time_label.text = "Run time: %02d:%02d" % [t / 60, t % 60]
 	_button.pressed.connect(_on_restart)

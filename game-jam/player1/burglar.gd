@@ -9,9 +9,12 @@ extends CharacterBody2D
 # Emit a noise event at most this often while running, so hearing checks
 # aren't spammed every physics frame.
 const NOISE_INTERVAL := 0.25
+const STEP_INTERVAL_WALK := 0.42
+const STEP_INTERVAL_RUN := 0.25
 
 var _current_zone: Node = null
 var _noise_cooldown: float = 0.0
+var _step_timer: float = 0.0
 
 func _physics_process(_delta: float) -> void:
 	# Guard: scene may load one frame before the ENet peer is fully active.
@@ -36,6 +39,19 @@ func _physics_process(_delta: float) -> void:
 	if running and velocity.length() > 1.0 and _noise_cooldown == 0.0:
 		Game.noise_at.emit(global_position)
 		_noise_cooldown = NOISE_INTERVAL
+	# Footsteps: random wood step every N seconds while moving; running
+	# triggers them faster (and uses the louder run sample).
+	_step_timer -= _delta
+	if velocity.length() > 1.0:
+		if _step_timer <= 0.0:
+			if running:
+				SFX.play("run", -6.0)
+				_step_timer = STEP_INTERVAL_RUN
+			else:
+				SFX.play_random_step()
+				_step_timer = STEP_INTERVAL_WALK
+	else:
+		_step_timer = 0.0
 	if Input.is_action_just_pressed("interact") and _current_zone != null:
 		_current_zone.trigger(self)
 

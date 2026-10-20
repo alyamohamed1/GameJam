@@ -21,6 +21,7 @@ func set_status(text: String) -> void:
 func _ready() -> void:
 	Game.modal_open = true
 	_edit.text_submitted.connect(_on_submit)
+	_edit.text_changed.connect(func(_t: String) -> void: SFX.play("keyboard", -12.0))
 	_edit.grab_focus()
 
 func _on_submit(text: String) -> void:

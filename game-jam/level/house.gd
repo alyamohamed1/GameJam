@@ -12,10 +12,10 @@ const FAIL_SCENE := preload("res://ui/fail.tscn")
 const FOG_SCENE := preload("res://level/fog.tscn")
 const VICTORY_SCENE := preload("res://ui/victory.tscn")
 
-const CIPHERTEXT := "VHYHQ WZR QLQH IRXU"
+const CIPHERTEXT := "lkbqtlpfu"
 
-const LAPTOP_PASSWORD := "Biscuit2019"
-const SAFE_CODE := "7294"
+const LAPTOP_PASSWORD := "Schopenhaeur2025"
+const SAFE_CODE := "126"
 
 @onready var zones_root: Node2D = $Zones
 @onready var burglar: Node2D = $Burglar
@@ -45,6 +45,7 @@ func _on_phase_changed(p: int) -> void:
 		var victory := VICTORY_SCENE.instantiate()
 		add_child(victory)
 	elif p == Game.Phase.BLACKOUT and multiplayer.is_server():
+		SFX.play("power_off")
 		_apply_blackout()
 
 func _apply_blackout() -> void:
@@ -100,7 +101,8 @@ func _connect_zones() -> void:
 				z.interacted.connect(_on_zone_stub.bind(z))
 
 func _on_fridge(_user: Node) -> void:
-	_show_note("FRIDGE", "A sticky note: password is\n\nBiscuit2019")
+	SFX.play("note_pickup")
+	_show_note("FRIDGE", "A sticky note: password is\n\nSchopenhaeur2025")
 
 func _on_laptop(_user: Node) -> void:
 	# Post-USB: laptop shows the encrypted file so P1 can read it to P2.
@@ -116,17 +118,20 @@ func _on_laptop(_user: Node) -> void:
 	modal.setup("HOME LAPTOP")
 	modal.submitted.connect(func(text: String) -> void:
 		if text.strip_edges().to_lower() == LAPTOP_PASSWORD.to_lower():
+			SFX.play("password_ok")
 			Game.laptop_unlocked = true
 			modal.close()
 			_show_note("HOME LAPTOP", "LOGGED IN. Plug the USB in.")
 		else:
-			modal.set_status("Access denied.\nHint: where the milk lives."))
+			SFX.play("password_wrong")
+			modal.set_status("Access denied.\nHint: check the fridge."))
 
 func _on_usb(_user: Node) -> void:
 	if not Game.laptop_unlocked:
 		_show_note("USB PORT", "Laptop is locked. Find the password first.")
 		return
 	if Game.phase == Game.Phase.PRE_USB:
+		SFX.play("usb")
 		Game.set_phase(Game.Phase.POST_USB)
 		_show_note("USB PORT", "USB plugged in. Hacker is online.")
 	else:
@@ -144,10 +149,13 @@ func _on_safe(_user: Node) -> void:
 	modal.setup("SAFE KEYPAD", "4-digit code", false)
 	modal.submitted.connect(func(text: String) -> void:
 		if text.strip_edges() == SAFE_CODE:
+			SFX.play("safe_open")
+			SFX.play("victory_item")
 			modal.close()
 			Game.set_phase(Game.Phase.BLACKOUT)
 			_show_note("SAFE", "Click. Safe opens. The lights go out.")
 		else:
+			SFX.play("safe_keypad")
 			modal.set_status("Beep. Access denied."))
 
 func _on_bookshelf(_user: Node) -> void:
@@ -155,6 +163,7 @@ func _on_bookshelf(_user: Node) -> void:
 		_show_note("BOOKSHELF", "The key is already in your pocket.")
 		return
 	Game.has_key = true
+	SFX.play("note_pickup")
 	_show_note("BOOKSHELF", "A heavy brass key. You pocketed it.")
 
 func _on_bedroom_door(_user: Node, door: Node) -> void:
@@ -165,6 +174,8 @@ func _on_bedroom_door(_user: Node, door: Node) -> void:
 		_show_note("BEDROOM DOOR", "Locked. You need a key.")
 		return
 	Game.door_unlocked = true
+	SFX.play("door_creak")
+	SFX.play("door_open", -4.0)
 	door.unlock()
 	_show_note("BEDROOM DOOR", "You turn the key. Door opens.")
 

@@ -193,6 +193,7 @@ func _tick_distracted(delta: float) -> void:
 		_sight.monitoring = false  # stays off; the cone is retired
 		_set_state(State.PATROL)
 		_path.clear()
+		SFX.stop_loop("dog_eat")
 
 func _tick_chase(delta: float) -> void:
 	# Stuck detection: if the dog hasn't moved more than CHASE_STUCK_MIN_DIST
@@ -238,12 +239,16 @@ func _begin_chase() -> void:
 	_chase_stuck_timer = 0.0
 	_chase_last_pos = global_position
 	_path.clear()
+	SFX.play("dog_bark")
+	SFX.loop("dog_growl", "dog_growl", -6.0)
 
 func _begin_search() -> void:
 	_set_state(State.SEARCH)
 	_search_timer = 0.0
 	_search_wander_timer = 0.0
 	_path.clear()
+	SFX.stop_loop("dog_growl")
+	SFX.play("dog_sniff")
 
 # ---- Shared helpers ----
 
@@ -288,6 +293,9 @@ func distract_at(pos: Vector2) -> void:
 	_distract_timer = 0.0
 	_eat_timer = 0.0
 	_set_state(State.DISTRACTED)
+	SFX.stop_loop("dog_growl")
+	SFX.play("dog_kibble")
+	SFX.loop("dog_eat", "dog_eat", -8.0)
 
 # ---- Signals ----
 
