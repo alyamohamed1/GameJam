@@ -48,3 +48,12 @@ func _on_peer_disconnected(_id: int) -> void:
 @rpc("authority", "call_local", "reliable")
 func _load_house() -> void:
 	get_tree().change_scene_to_file(HOUSE_SCENE)
+
+# Host-triggered reload after FAIL. Resets host-only flags on each peer
+# (laptop_unlocked only lives on host, but modal_open could be stuck true
+# if a modal was open when FAIL fired).
+@rpc("authority", "call_local", "reliable")
+func restart() -> void:
+	Game.modal_open = false
+	Game.laptop_unlocked = false
+	get_tree().change_scene_to_file(HOUSE_SCENE)

@@ -5,6 +5,7 @@ extends Node2D
 const DESK_SCENE := preload("res://player2/desk.tscn")
 const MODAL_NOTE := preload("res://ui/modal_note.tscn")
 const MODAL_PASSWORD := preload("res://ui/modal_password.tscn")
+const FAIL_SCENE := preload("res://ui/fail.tscn")
 
 const LAPTOP_PASSWORD := "Biscuit2019"
 
@@ -20,6 +21,7 @@ const WALL_COLOR := Color(0.08, 0.08, 0.1, 1.0)
 
 func _ready() -> void:
 	_build_walls()
+	Game.phase_changed.connect(_on_phase_changed)
 	if multiplayer.is_server():
 		var cam := Camera2D.new()
 		cam.name = "HostCam"
@@ -32,6 +34,11 @@ func _ready() -> void:
 	else:
 		var desk := DESK_SCENE.instantiate()
 		get_tree().root.call_deferred("add_child", desk)
+
+func _on_phase_changed(p: int) -> void:
+	if p == Game.Phase.FAIL:
+		var fail := FAIL_SCENE.instantiate()
+		get_tree().root.add_child(fail)
 
 # ---- Walls ----
 

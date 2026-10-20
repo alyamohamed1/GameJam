@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://housestage0"]
+[gd_scene load_steps=5 format=3 uid="uid://housestage0"]
 
 [ext_resource type="Script" path="res://level/house.gd" id="1_house"]
 [ext_resource type="PackedScene" uid="uid://burglarstage0" path="res://player1/burglar.tscn" id="2_burglar"]
 [ext_resource type="PackedScene" uid="uid://interactable1" path="res://devices/interactable.tscn" id="3_int"]
+[ext_resource type="PackedScene" uid="uid://dogstage1" path="res://dog/dog.tscn" id="4_dog"]
 
 [node name="House" type="Node2D"]
 script = ExtResource("1_house")
@@ -81,3 +82,6 @@ label = "Exit"
 
 [node name="Burglar" parent="." instance=ExtResource("2_burglar")]
 position = Vector2(160, 405)
+
+[node name="Dog" parent="." instance=ExtResource("4_dog")]
+position = Vector2(480, 135)
