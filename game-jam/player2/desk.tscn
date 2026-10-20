@@ -40,3 +40,22 @@ render_target_update_mode = 4
 [node name="Camera2D" type="Camera2D" parent="Root/Monitor/SubViewport"]
 position = Vector2(160, 135)
 zoom = Vector2(0.5, 0.5)
+
+[node name="Devices" type="Panel" parent="Root"]
+offset_left = 8.0
+offset_top = 165.0
+offset_right = 248.0
+offset_bottom = 230.0
+
+[node name="VBox" type="VBoxContainer" parent="Root/Devices"]
+offset_left = 8.0
+offset_top = 6.0
+offset_right = 232.0
+offset_bottom = 59.0
+
+[node name="Title" type="Label" parent="Root/Devices/VBox"]
+text = "DEVICES"
+theme_override_font_sizes/font_size = 10
+
+[node name="FeederBtn" type="Button" parent="Root/Devices/VBox"]
+text = "Trigger Feeder"

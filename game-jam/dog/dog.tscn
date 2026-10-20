@@ -19,7 +19,7 @@ properties/2/path = NodePath(".:_facing")
 properties/2/spawn = true
 properties/2/replication_mode = 1
 
-[node name="Dog" type="CharacterBody2D"]
+[node name="Dog" type="CharacterBody2D" groups=["dog"]]
 collision_layer = 1
 collision_mask = 1
 script = ExtResource("1_dog")

@@ -27,10 +27,14 @@ var state: int = State.PATROL
 var _patrol_index: int = 0
 var _facing: Vector2 = Vector2.RIGHT
 var _alert_timer: float = 0.0
-var _tracked_burglars: Array[Node] = []  # bodies currently inside sight Area2D
-var _investigate_target: Vector2 = Vector2.ZERO
-var _investigate_timer: float = 0.0  # time spent moving to the noise
-var _sniff_timer: float = 0.0  # time spent sniffing on arrival
+var _tracked_burglars: Array[Node] = []
+var _investigate_timer: float = 0.0
+var _sniff_timer: float = 0.0
+var _distract_timer: float = 0.0  # time spent moving to feeder
+var _eat_timer: float = 0.0
+# Path through doorway waypoints (via HouseNav). Used by both INVESTIGATE
+# and DISTRACTED so the dog never tries to cross a wall diagonally.
+var _path: Array = []
 
 @onready var _sight: Area2D = $Sight
 @onready var _sight_visual: Polygon2D = $Sight/Visual
@@ -59,6 +63,8 @@ func _physics_process(delta: float) -> void:
 			_tick_patrol()
 		State.INVESTIGATE:
 			_tick_investigate(delta)
+		State.DISTRACTED:
+			_tick_distracted(delta)
 		State.ALERT:
 			_tick_alert(delta)
 		_:
@@ -89,16 +95,54 @@ func _tick_alert(_delta: float) -> void:
 
 func _tick_investigate(delta: float) -> void:
 	_investigate_timer += delta
-	var to_target := _investigate_target - global_position
-	if to_target.length() <= waypoint_radius or _investigate_timer >= INVESTIGATE_TIMEOUT:
-		# Arrived (or gave up). Sniff then resume patrol.
+	if _investigate_timer >= INVESTIGATE_TIMEOUT:
+		velocity = Vector2.ZERO
+		_set_state(State.PATROL)
+		return
+	if _path.is_empty():
+		# Arrived at noise spot. Sniff, then resume patrol.
 		velocity = Vector2.ZERO
 		_sniff_timer += delta
 		if _sniff_timer >= INVESTIGATE_SNIFF:
 			_set_state(State.PATROL)
 		return
+	_walk_path()
+
+func _tick_distracted(delta: float) -> void:
+	_distract_timer += delta
+	if not _path.is_empty() and _distract_timer < INVESTIGATE_TIMEOUT:
+		_walk_path()
+		return
+	# Arrived at feeder (or timed out): eat.
+	velocity = Vector2.ZERO
+	_eat_timer += delta
+	if _eat_timer >= Game.FEEDER_EAT_TIME:
+		_sight.monitoring = true
+		_set_state(State.PATROL)
+
+# Shared stepper: walk toward the first waypoint, pop it on arrival.
+func _walk_path() -> void:
+	var target: Vector2 = _path[0]
+	var to_target := target - global_position
+	if to_target.length() <= waypoint_radius:
+		_path.pop_front()
+		return
 	velocity = to_target.normalized() * speed
 	move_and_slide()
+
+# Public (host only). Switches dog into DISTRACTED, pulling it from any
+# non-ALERT state. Sight is turned off while the dog is eating so the burglar
+# can safely cross in front of the feeder.
+func distract_at(pos: Vector2) -> void:
+	if not multiplayer.is_server():
+		return
+	if state == State.ALERT:
+		return
+	_path = HouseNav.find_path(global_position, pos)
+	_distract_timer = 0.0
+	_eat_timer = 0.0
+	_sight.monitoring = false
+	_set_state(State.DISTRACTED)
 
 func _on_noise(pos: Vector2) -> void:
 	# Host-only reaction (noise_at is only emitted on host). Alert interrupts
@@ -106,10 +150,10 @@ func _on_noise(pos: Vector2) -> void:
 	if not multiplayer.is_server():
 		return
 	if state == State.ALERT or state == State.DISTRACTED:
-		return
+		return  # eating / catching takes priority
 	if global_position.distance_to(pos) > HEARING_RANGE:
 		return
-	_investigate_target = pos
+	_path = HouseNav.find_path(global_position, pos)
 	_investigate_timer = 0.0
 	_sniff_timer = 0.0
 	_set_state(State.INVESTIGATE)
