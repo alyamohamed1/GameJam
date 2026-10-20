@@ -1,0 +1,47 @@
+[gd_scene load_steps=2 format=3 uid="uid://victorystage1"]
+
+[ext_resource type="Script" path="res://ui/victory.gd" id="1_vict"]
+
+[node name="Victory" type="CanvasLayer"]
+layer = 30
+script = ExtResource("1_vict")
+
+[node name="Root" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="Root"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0.2, 0.1, 0.7)
+mouse_filter = 2
+
+[node name="Panel" type="Panel" parent="Root"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -140.0
+offset_top = -60.0
+offset_right = 140.0
+offset_bottom = 60.0
+
+[node name="VBox" type="VBoxContainer" parent="Root/Panel"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 270.0
+offset_bottom = 110.0
+
+[node name="Title" type="Label" parent="Root/Panel/VBox"]
+text = "GOT AWAY"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+
+[node name="Time" type="Label" parent="Root/Panel/VBox"]
+text = "Run time: 00:00"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+
+[node name="Restart" type="Button" parent="Root/Panel/VBox"]
+text = "Restart"

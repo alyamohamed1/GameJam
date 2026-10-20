@@ -10,6 +10,9 @@ const MODAL_NOTE := preload("res://ui/modal_note.tscn")
 const MODAL_PASSWORD := preload("res://ui/modal_password.tscn")
 const FAIL_SCENE := preload("res://ui/fail.tscn")
 const FOG_SCENE := preload("res://level/fog.tscn")
+const VICTORY_SCENE := preload("res://ui/victory.tscn")
+
+const CIPHERTEXT := "VHYHQ WZR QLQH IRXU"
 
 const LAPTOP_PASSWORD := "Biscuit2019"
 const SAFE_CODE := "7294"
@@ -38,6 +41,9 @@ func _on_phase_changed(p: int) -> void:
 	if p == Game.Phase.FAIL:
 		var fail := FAIL_SCENE.instantiate()
 		add_child(fail)
+	elif p == Game.Phase.VICTORY:
+		var victory := VICTORY_SCENE.instantiate()
+		add_child(victory)
 
 # ---- Puzzle wiring (host only) ----
 
@@ -58,6 +64,8 @@ func _connect_zones() -> void:
 				z.interacted.connect(_on_bookshelf)
 			"BedroomDoor":
 				z.interacted.connect(_on_bedroom_door.bind(z))
+			"Exit":
+				z.interacted.connect(_on_exit)
 			_:
 				z.interacted.connect(_on_zone_stub.bind(z))
 
@@ -65,6 +73,11 @@ func _on_fridge(_user: Node) -> void:
 	_show_note("FRIDGE", "A sticky note: password is\n\nBiscuit2019")
 
 func _on_laptop(_user: Node) -> void:
+	# Post-USB: laptop shows the encrypted file so P1 can read it to P2.
+	if Game.phase >= Game.Phase.POST_USB:
+		_show_note("LAPTOP SCREEN",
+			"Encrypted file open on screen:\n\n%s\n\nRead it to the hacker." % CIPHERTEXT)
+		return
 	if Game.laptop_unlocked:
 		_show_note("HOME LAPTOP", "Logged in. Plug the USB in.")
 		return
@@ -124,6 +137,12 @@ func _on_bedroom_door(_user: Node, door: Node) -> void:
 	Game.door_unlocked = true
 	door.unlock()
 	_show_note("BEDROOM DOOR", "You turn the key. Door opens.")
+
+func _on_exit(_user: Node) -> void:
+	if Game.phase < Game.Phase.BLACKOUT:
+		_show_note("FRONT DOOR", "Not without the loot. Crack the safe first.")
+		return
+	Game.set_phase(Game.Phase.VICTORY)
 
 func _on_zone_stub(_user: Node, zone: Node) -> void:
 	print("[host] interacted: %s (no handler yet)" % zone.label)

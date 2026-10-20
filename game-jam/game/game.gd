@@ -26,6 +26,11 @@ const FEEDER_COOLDOWN := 20.0
 const FEEDER_EAT_TIME := 5.0
 var feeder_cooldown: float = 0.0
 
+# Seconds elapsed since the current run began (set when phase leaves LOBBY).
+# Both peers tick this locally; host authors phase transitions so start
+# time is consistent.
+var run_time: float = 0.0
+
 func _ready() -> void:
 	# Debug: show red outlines over every collider at runtime. Helps the
 	# builder line up walls against the map art without opening the editor.
@@ -35,6 +40,8 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if feeder_cooldown > 0.0:
 		feeder_cooldown = max(0.0, feeder_cooldown - delta)
+	if phase != Phase.LOBBY and phase != Phase.VICTORY and phase != Phase.FAIL:
+		run_time += delta
 
 # ---- Phase ----
 

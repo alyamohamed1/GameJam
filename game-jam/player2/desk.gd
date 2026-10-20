@@ -4,8 +4,6 @@ extends CanvasLayer
 # button, and the phase readout. Everything client-side: no RPCs from here
 # except Game.request_feeder.
 
-const CIPHERTEXT := "VHYHQ WZR QLQH IRXU"
-
 @onready var feeder_btn: Button = $Root/Devices/HBox/FeederBtn
 @onready var phase_label: Label = $Root/Devices/HBox/PhaseLabel
 @onready var monitors_root: Node = $Root/Monitors
@@ -14,6 +12,7 @@ const CIPHERTEXT := "VHYHQ WZR QLQH IRXU"
 @onready var hc_decoded: Label = $Root/HomeComputer/VBox/Decoded
 @onready var hc_minus: Button = $Root/HomeComputer/VBox/ShiftRow/Minus
 @onready var hc_plus: Button = $Root/HomeComputer/VBox/ShiftRow/Plus
+@onready var hc_cipher_edit: LineEdit = $Root/HomeComputer/VBox/CipherEdit
 
 var _shift: int = 0
 
@@ -21,6 +20,7 @@ func _ready() -> void:
 	feeder_btn.pressed.connect(Game.request_feeder)
 	hc_minus.pressed.connect(func() -> void: _change_shift(-1))
 	hc_plus.pressed.connect(func() -> void: _change_shift(1))
+	hc_cipher_edit.text_changed.connect(func(_t: String) -> void: _update_cipher_display())
 	Game.phase_changed.connect(_on_phase_changed)
 	_update_cipher_display()
 	_apply_phase(Game.phase)
@@ -39,8 +39,8 @@ func _change_shift(delta: int) -> void:
 
 func _update_cipher_display() -> void:
 	hc_shift_label.text = "shift %d" % _shift
-	# Decrypt by shifting backward by the chosen amount.
-	hc_decoded.text = Cipher.shift(CIPHERTEXT, -_shift)
+	# Decrypt whatever P2 typed by shifting backward.
+	hc_decoded.text = Cipher.shift(hc_cipher_edit.text, -_shift)
 
 func _on_phase_changed(p: int) -> void:
 	_apply_phase(p)

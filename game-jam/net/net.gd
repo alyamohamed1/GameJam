@@ -60,4 +60,5 @@ func restart() -> void:
 	Game.door_unlocked = false
 	Game.burglar_hidden = false
 	Game.feeder_cooldown = 0.0
+	Game.run_time = 0.0
 	get_tree().change_scene_to_file(HOUSE_SCENE)

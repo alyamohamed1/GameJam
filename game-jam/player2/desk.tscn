@@ -79,10 +79,14 @@ text = "HOME COMPUTER"
 theme_override_font_sizes/font_size = 9
 horizontal_alignment = 1
 
-[node name="Cipher" type="Label" parent="Root/HomeComputer/VBox"]
-text = "File: VHYHQ WZR QLQH IRXU"
+[node name="CipherLabel" type="Label" parent="Root/HomeComputer/VBox"]
+text = "Type cipher from P1:"
+theme_override_font_sizes/font_size = 7
+modulate = Color(1, 1, 1, 0.7)
+
+[node name="CipherEdit" type="LineEdit" parent="Root/HomeComputer/VBox"]
+placeholder_text = "VHYHQ ..."
 theme_override_font_sizes/font_size = 8
-autowrap_mode = 2
 
 [node name="ShiftRow" type="HBoxContainer" parent="Root/HomeComputer/VBox"]
 alignment = 1
