@@ -9,6 +9,7 @@ const DESK_SCENE := preload("res://player2/desk.tscn")
 const MODAL_NOTE := preload("res://ui/modal_note.tscn")
 const MODAL_PASSWORD := preload("res://ui/modal_password.tscn")
 const FAIL_SCENE := preload("res://ui/fail.tscn")
+const FOG_SCENE := preload("res://level/fog.tscn")
 
 const LAPTOP_PASSWORD := "Biscuit2019"
 const SAFE_CODE := "7294"
@@ -26,6 +27,8 @@ func _ready() -> void:
 		burglar.add_child(cam)
 		cam.make_current()
 		_connect_zones()
+		var fog := FOG_SCENE.instantiate()
+		add_child(fog)
 		Game.set_phase(Game.Phase.PRE_USB)
 	else:
 		var desk := DESK_SCENE.instantiate()

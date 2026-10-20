@@ -60,6 +60,15 @@ func _ready() -> void:
 		_sight.visible = false
 	_bubble.hide()
 	Game.noise_at.connect(_on_noise)
+	# Hide the dog sprite from Player 1's main viewport. The client's
+	# monitors share world_2d but render via separate SubViewports, which
+	# don't inherit this modulate change because the Sprite ColorRect lives
+	# in world_2d; so instead of modulate, we clear the color on host only.
+	# Debug collider boxes always off for the dog (P1 shouldn't tell where
+	# the dog is from an outline). Visibility is toggled every frame based
+	# on whether the burglar is in the same room.
+	for s in find_children("", "CollisionShape2D", true, false):
+		s.debug_color = Color(0, 0, 0, 0)
 
 func _physics_process(delta: float) -> void:
 	var peer := multiplayer.multiplayer_peer
@@ -72,6 +81,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if _burglar == null:
 		_burglar = get_tree().get_first_node_in_group("burglar")
+	_update_visibility()
 	_detect_burglar(delta)
 	match state:
 		State.PATROL:
@@ -90,6 +100,20 @@ func _physics_process(delta: float) -> void:
 		var desired := velocity.normalized()
 		var step := TURN_SPEED * delta
 		_facing = _facing.rotated(clamp(_facing.angle_to(desired), -step, step)).normalized()
+
+# ---- Visibility ----
+
+# Host only. P1 only sees the dog when they're in the same room; otherwise
+# the sprite is fully transparent so P2 has to call out dog positions.
+func _update_visibility() -> void:
+	var sprite := get_node_or_null("Sprite")
+	if sprite == null:
+		return
+	if _burglar == null:
+		sprite.modulate.a = 0.0
+		return
+	var same_room := HouseNav.room_at(global_position) == HouseNav.room_at(_burglar.global_position)
+	sprite.modulate.a = 1.0 if same_room else 0.0
 
 # ---- Detection ----
 
