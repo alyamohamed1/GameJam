@@ -7,6 +7,10 @@ enum Phase { LOBBY, PRE_USB, POST_USB, BLACKOUT, VICTORY, FAIL }
 
 signal phase_changed(new_phase: int)
 
+# Emitted on the host by the burglar when running. The dog listens and
+# switches to INVESTIGATE if the noise falls within hearing range.
+signal noise_at(pos: Vector2)
+
 var phase: int = Phase.LOBBY
 
 # Host-only. True while any blocking modal (laptop password, fridge note,

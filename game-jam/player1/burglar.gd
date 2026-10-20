@@ -6,7 +6,12 @@ extends CharacterBody2D
 @export var speed: float = 60.0
 @export var run_mult: float = 1.8
 
+# Emit a noise event at most this often while running, so hearing checks
+# aren't spammed every physics frame.
+const NOISE_INTERVAL := 0.25
+
 var _current_zone: Node = null
+var _noise_cooldown: float = 0.0
 
 func _physics_process(_delta: float) -> void:
 	# Guard: scene may load one frame before the ENet peer is fully active.
@@ -21,11 +26,16 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector2.ZERO
 		return
 	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	var running := Input.is_action_pressed("run")
 	var s := speed
-	if Input.is_action_pressed("run"):
+	if running:
 		s *= run_mult
 	velocity = dir * s
 	move_and_slide()
+	_noise_cooldown = max(0.0, _noise_cooldown - _delta)
+	if running and velocity.length() > 1.0 and _noise_cooldown == 0.0:
+		Game.noise_at.emit(global_position)
+		_noise_cooldown = NOISE_INTERVAL
 	if Input.is_action_just_pressed("interact") and _current_zone != null:
 		_current_zone.trigger(self)
 

@@ -8,6 +8,10 @@ enum State { PATROL, INVESTIGATE, DISTRACTED, ALERT }
 const SIGHT_RANGE := 160.0
 const SIGHT_HALF_ANGLE_DEG := 24.0
 const ALERT_HOLD := 0.5  # seconds burglar must stay visible to be caught
+const HEARING_RANGE := 160.0
+const INVESTIGATE_SNIFF := 2.0  # seconds to sniff at noise spot
+const INVESTIGATE_TIMEOUT := 6.0  # give up if path is blocked
+const TURN_SPEED := 6.0  # radians per second for facing smoothing
 
 @export var speed: float = 45.0
 @export var waypoint_radius: float = 4.0
@@ -24,6 +28,9 @@ var _patrol_index: int = 0
 var _facing: Vector2 = Vector2.RIGHT
 var _alert_timer: float = 0.0
 var _tracked_burglars: Array[Node] = []  # bodies currently inside sight Area2D
+var _investigate_target: Vector2 = Vector2.ZERO
+var _investigate_timer: float = 0.0  # time spent moving to the noise
+var _sniff_timer: float = 0.0  # time spent sniffing on arrival
 
 @onready var _sight: Area2D = $Sight
 @onready var _sight_visual: Polygon2D = $Sight/Visual
@@ -33,6 +40,7 @@ func _ready() -> void:
 	_bubble.hide()
 	_sight.body_entered.connect(_on_sight_entered)
 	_sight.body_exited.connect(_on_sight_exited)
+	Game.noise_at.connect(_on_noise)
 
 func _physics_process(delta: float) -> void:
 	var peer := multiplayer.multiplayer_peer
@@ -49,13 +57,17 @@ func _physics_process(delta: float) -> void:
 	match state:
 		State.PATROL:
 			_tick_patrol()
+		State.INVESTIGATE:
+			_tick_investigate(delta)
 		State.ALERT:
 			_tick_alert(delta)
 		_:
 			velocity = Vector2.ZERO
-	# Update facing from current velocity; keep last facing when idle.
+	# Smooth facing rotation so the sight cone doesn't snap and insta-catch.
 	if velocity.length() > 1.0:
-		_facing = velocity.normalized()
+		var desired := velocity.normalized()
+		var step := TURN_SPEED * delta
+		_facing = _facing.rotated(clamp(_facing.angle_to(desired), -step, step)).normalized()
 	_sight.rotation = _facing.angle()
 	_check_sight(delta)
 
@@ -74,6 +86,33 @@ func _tick_patrol() -> void:
 func _tick_alert(_delta: float) -> void:
 	# Freeze on spot while reacting. "!" bubble shows via _set_state.
 	velocity = Vector2.ZERO
+
+func _tick_investigate(delta: float) -> void:
+	_investigate_timer += delta
+	var to_target := _investigate_target - global_position
+	if to_target.length() <= waypoint_radius or _investigate_timer >= INVESTIGATE_TIMEOUT:
+		# Arrived (or gave up). Sniff then resume patrol.
+		velocity = Vector2.ZERO
+		_sniff_timer += delta
+		if _sniff_timer >= INVESTIGATE_SNIFF:
+			_set_state(State.PATROL)
+		return
+	velocity = to_target.normalized() * speed
+	move_and_slide()
+
+func _on_noise(pos: Vector2) -> void:
+	# Host-only reaction (noise_at is only emitted on host). Alert interrupts
+	# noise; don't yank the dog out of catching the burglar.
+	if not multiplayer.is_server():
+		return
+	if state == State.ALERT or state == State.DISTRACTED:
+		return
+	if global_position.distance_to(pos) > HEARING_RANGE:
+		return
+	_investigate_target = pos
+	_investigate_timer = 0.0
+	_sniff_timer = 0.0
+	_set_state(State.INVESTIGATE)
 
 func _on_sight_entered(body: Node) -> void:
 	if body.is_in_group("burglar") and body not in _tracked_burglars:

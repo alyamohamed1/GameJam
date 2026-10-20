@@ -33,12 +33,12 @@ func _ready() -> void:
 		Game.set_phase(Game.Phase.PRE_USB)
 	else:
 		var desk := DESK_SCENE.instantiate()
-		get_tree().root.call_deferred("add_child", desk)
+		add_child(desk)
 
 func _on_phase_changed(p: int) -> void:
 	if p == Game.Phase.FAIL:
 		var fail := FAIL_SCENE.instantiate()
-		get_tree().root.add_child(fail)
+		add_child(fail)
 
 # ---- Walls ----
 
@@ -121,7 +121,7 @@ func _on_laptop(_user: Node) -> void:
 		_show_note("HOME LAPTOP", "Logged in. Plug the USB in.")
 		return
 	var modal: CanvasLayer = MODAL_PASSWORD.instantiate()
-	get_tree().root.add_child(modal)
+	add_child(modal)
 	modal.setup("HOME LAPTOP")
 	modal.submitted.connect(func(text: String) -> void:
 		if text.strip_edges().to_lower() == LAPTOP_PASSWORD.to_lower():
@@ -146,5 +146,5 @@ func _on_zone_stub(_user: Node, zone: Node) -> void:
 
 func _show_note(title: String, body: String) -> void:
 	var modal: CanvasLayer = MODAL_NOTE.instantiate()
-	get_tree().root.add_child(modal)
+	add_child(modal)
 	modal.setup(title, body)
