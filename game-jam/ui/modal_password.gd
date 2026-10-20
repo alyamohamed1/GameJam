@@ -10,8 +10,10 @@ signal cancelled
 @onready var _edit: LineEdit = $Root/Panel/VBox/Edit
 @onready var _status: Label = $Root/Panel/VBox/Status
 
-func setup(title_text: String) -> void:
+func setup(title_text: String, placeholder: String = "password", secret: bool = true) -> void:
 	_title.text = title_text
+	_edit.placeholder_text = placeholder
+	_edit.secret = secret
 
 func set_status(text: String) -> void:
 	_status.text = text

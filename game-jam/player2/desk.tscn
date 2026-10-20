@@ -26,39 +26,105 @@ mouse_filter = 2
 [node name="Kitchen" parent="Root/Monitors" instance=ExtResource("2_mon")]
 offset_right = 160.0
 offset_bottom = 100.0
-cam_pos = Vector2(160, 135)
-room_label = "KITCHEN (FEEDER CAM)"
+cam_pos = Vector2(200, 200)
+cam_zoom = 0.35
+room_label = "KITCHEN (FEEDER)"
 always_live = true
 
 [node name="Living" parent="Root/Monitors" instance=ExtResource("2_mon")]
 offset_left = 160.0
 offset_right = 320.0
 offset_bottom = 100.0
-cam_pos = Vector2(480, 135)
+cam_pos = Vector2(200, 650)
+cam_zoom = 0.3
 room_label = "LIVING"
 
 [node name="Bedroom" parent="Root/Monitors" instance=ExtResource("2_mon")]
 offset_left = 320.0
 offset_right = 480.0
 offset_bottom = 100.0
-cam_pos = Vector2(800, 135)
+cam_pos = Vector2(980, 755)
+cam_zoom = 0.3
 room_label = "BEDROOM"
 
-[node name="Entrance" parent="Root/Monitors" instance=ExtResource("2_mon")]
+[node name="Office" parent="Root/Monitors" instance=ExtResource("2_mon")]
 offset_left = 80.0
 offset_top = 100.0
 offset_right = 240.0
 offset_bottom = 200.0
-cam_pos = Vector2(160, 405)
-room_label = "ENTRANCE"
+cam_pos = Vector2(980, 170)
+cam_zoom = 0.3
+room_label = "OFFICE"
 
-[node name="Hallway" parent="Root/Monitors" instance=ExtResource("2_mon")]
-offset_left = 240.0
-offset_top = 100.0
-offset_right = 400.0
+[node name="HomeComputer" type="Panel" parent="Root"]
+offset_left = 320.0
+offset_top = 110.0
+offset_right = 478.0
 offset_bottom = 200.0
-cam_pos = Vector2(480, 405)
-room_label = "HALLWAY"
+
+[node name="VBox" type="VBoxContainer" parent="Root/HomeComputer"]
+offset_left = 4.0
+offset_top = 2.0
+offset_right = 154.0
+offset_bottom = 86.0
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="Root/HomeComputer/VBox"]
+text = "HOME COMPUTER"
+theme_override_font_sizes/font_size = 9
+horizontal_alignment = 1
+
+[node name="Cipher" type="Label" parent="Root/HomeComputer/VBox"]
+text = "File: VHYHQ WZR QLQH IRXU"
+theme_override_font_sizes/font_size = 8
+autowrap_mode = 2
+
+[node name="ShiftRow" type="HBoxContainer" parent="Root/HomeComputer/VBox"]
+alignment = 1
+
+[node name="Minus" type="Button" parent="Root/HomeComputer/VBox/ShiftRow"]
+text = "-"
+custom_minimum_size = Vector2(20, 0)
+
+[node name="ShiftLabel" type="Label" parent="Root/HomeComputer/VBox/ShiftRow"]
+text = "shift 0"
+theme_override_font_sizes/font_size = 8
+custom_minimum_size = Vector2(40, 0)
+horizontal_alignment = 1
+
+[node name="Plus" type="Button" parent="Root/HomeComputer/VBox/ShiftRow"]
+text = "+"
+custom_minimum_size = Vector2(20, 0)
+
+[node name="Decoded" type="Label" parent="Root/HomeComputer/VBox"]
+text = "VHYHQ WZR QLQH IRXU"
+theme_override_font_sizes/font_size = 8
+autowrap_mode = 2
+modulate = Color(0.7, 1, 0.7, 1)
+
+[node name="Hint" type="Label" parent="Root/HomeComputer/VBox"]
+text = "hint: Caesar jumps the fence 3 times."
+theme_override_font_sizes/font_size = 7
+autowrap_mode = 2
+modulate = Color(1, 1, 1, 0.6)
+
+[node name="LockedOverlay" type="Control" parent="Root/HomeComputer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Bg" type="ColorRect" parent="Root/HomeComputer/LockedOverlay"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.02, 0.02, 0.04, 1)
+
+[node name="Label" type="Label" parent="Root/HomeComputer/LockedOverlay"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "LOCKED"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 10
+modulate = Color(0.6, 0.6, 0.6, 1)
 
 [node name="Devices" type="Panel" parent="Root"]
 offset_left = 8.0

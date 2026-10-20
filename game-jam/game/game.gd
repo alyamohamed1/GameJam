@@ -14,6 +14,10 @@ signal noise_at(pos: Vector2)
 var phase: int = Phase.LOBBY
 var modal_open: bool = false
 var laptop_unlocked: bool = false
+# Set true when burglar picks up the key from the Living bookshelf.
+var has_key: bool = false
+# Set true when burglar uses the key on the bedroom door.
+var door_unlocked: bool = false
 
 const FEEDER_COOLDOWN := 20.0
 const FEEDER_EAT_TIME := 5.0

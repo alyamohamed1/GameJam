@@ -56,4 +56,7 @@ func _load_house() -> void:
 func restart() -> void:
 	Game.modal_open = false
 	Game.laptop_unlocked = false
+	Game.has_key = false
+	Game.door_unlocked = false
+	Game.feeder_cooldown = 0.0
 	get_tree().change_scene_to_file(HOUSE_SCENE)

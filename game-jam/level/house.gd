@@ -1,6 +1,8 @@
 extends Node2D
-# Shared world. Builds walls procedurally. Host wires puzzle logic for each
-# interactable zone and owns the modal UI; client just shows the desk.
+# Shared world (Stage 1 redesign). 7 rooms built from the gamejam map:
+# Kitchen, Living, Hallway, Office, Bathroom, Bedroom, plus a Closet nook
+# in the top-right of the Kitchen. Walls built procedurally from doorway
+# gaps so tweaking a door position doesn't require touching the .tscn.
 
 const DESK_SCENE := preload("res://player2/desk.tscn")
 const MODAL_NOTE := preload("res://ui/modal_note.tscn")
@@ -8,11 +10,11 @@ const MODAL_PASSWORD := preload("res://ui/modal_password.tscn")
 const FAIL_SCENE := preload("res://ui/fail.tscn")
 
 const LAPTOP_PASSWORD := "Biscuit2019"
+const SAFE_CODE := "7294"
 
-# World size: 960 x 540 = two viewport widths/heights (viewport is 480 x 270).
-const WORLD_SIZE := Vector2(960, 540)
-const WALL_THICKNESS := 8.0
-const DOORWAY_WIDTH := 48.0
+const WORLD_SIZE := Vector2(1200, 900)
+const WALL_THICKNESS := 10.0
+const DOORWAY_WIDTH := 60.0
 const WALL_COLOR := Color(0.08, 0.08, 0.1, 1.0)
 
 @onready var walls_root: Node2D = $Walls
@@ -43,19 +45,41 @@ func _on_phase_changed(p: int) -> void:
 # ---- Walls ----
 
 func _build_walls() -> void:
+	# Perimeter.
 	_add_wall_h(0.0, WORLD_SIZE.x, 0.0)
 	_add_wall_h(0.0, WORLD_SIZE.x, WORLD_SIZE.y - WALL_THICKNESS)
 	_add_wall_v(0.0, WORLD_SIZE.y, 0.0)
 	_add_wall_v(0.0, WORLD_SIZE.y, WORLD_SIZE.x - WALL_THICKNESS)
-	var mid_y := 270.0 - WALL_THICKNESS * 0.5
-	for seg in _segments_with_gaps(0.0, WORLD_SIZE.x, [160.0, 480.0, 800.0]):
-		_add_wall_h(seg.x, seg.y, mid_y)
-	var left_vx := 320.0 - WALL_THICKNESS * 0.5
-	for seg in _segments_with_gaps(0.0, WORLD_SIZE.y, [135.0, 405.0]):
-		_add_wall_v(seg.x, seg.y, left_vx)
-	var right_vx := 640.0 - WALL_THICKNESS * 0.5
-	for seg in _segments_with_gaps(0.0, WORLD_SIZE.y, [135.0, 405.0]):
-		_add_wall_v(seg.x, seg.y, right_vx)
+
+	# Kitchen bottom / Living top (y=400). Door K-L at x=130.
+	for seg in _segments_with_gaps(0.0, 400.0, [130.0]):
+		_add_wall_h(seg.x, seg.y, 400.0 - WALL_THICKNESS * 0.5)
+
+	# Office bottom / Bathroom top (y=350). Door Office-Bathroom at x=1000.
+	for seg in _segments_with_gaps(760.0, 1200.0, [1000.0]):
+		_add_wall_h(seg.x, seg.y, 350.0 - WALL_THICKNESS * 0.5)
+
+	# Bathroom bottom / Bedroom top (y=605). Solid, no doorway.
+	_add_wall_h(760.0, 1200.0 - 760.0, 605.0 - WALL_THICKNESS * 0.5)
+
+	# Closet partition (y=80) within Kitchen. Door at x=360.
+	for seg in _segments_with_gaps(320.0, 400.0, [360.0]):
+		_add_wall_h(seg.x, seg.y, 80.0 - WALL_THICKNESS * 0.5)
+
+	# Closet west wall (x=320), solid, y=0..80.
+	_add_wall_v(0.0, 80.0, 320.0 - WALL_THICKNESS * 0.5)
+
+	# Kitchen+Living right / Hallway left (x=400). Doors at y=200 (K-H) and
+	# y=650 (L-H).
+	for seg in _segments_with_gaps(0.0, 900.0, [200.0, 650.0]):
+		_add_wall_v(seg.x, seg.y, 400.0 - WALL_THICKNESS * 0.5)
+
+	# Hallway right / Right rooms left (x=750). Doors at y=180 (Office-H)
+	# and y=750 (Bedroom-H). The bedroom door opening stays physically open
+	# in this wall; the lockable BedroomDoor node spawned separately fills
+	# the opening while locked.
+	for seg in _segments_with_gaps(0.0, 900.0, [180.0, 750.0]):
+		_add_wall_v(seg.x, seg.y, 750.0 - WALL_THICKNESS * 0.5)
 
 func _segments_with_gaps(axis_start: float, axis_end: float, gap_centers: Array) -> Array:
 	var cursor := axis_start
@@ -110,6 +134,8 @@ func _connect_zones() -> void:
 				z.interacted.connect(_on_laptop)
 			"UsbPort":
 				z.interacted.connect(_on_usb)
+			"Safe":
+				z.interacted.connect(_on_safe)
 			_:
 				z.interacted.connect(_on_zone_stub.bind(z))
 
@@ -140,6 +166,24 @@ func _on_usb(_user: Node) -> void:
 		_show_note("USB PORT", "USB plugged in. Hacker is online.")
 	else:
 		_show_note("USB PORT", "USB already plugged in.")
+
+func _on_safe(_user: Node) -> void:
+	if Game.phase < Game.Phase.POST_USB:
+		_show_note("SAFE", "Keypad is dead. Need the hacker to decrypt the code first.")
+		return
+	if Game.phase >= Game.Phase.BLACKOUT:
+		_show_note("SAFE", "Already open.")
+		return
+	var modal: CanvasLayer = MODAL_PASSWORD.instantiate()
+	add_child(modal)
+	modal.setup("SAFE KEYPAD", "4-digit code", false)
+	modal.submitted.connect(func(text: String) -> void:
+		if text.strip_edges() == SAFE_CODE:
+			modal.close()
+			Game.set_phase(Game.Phase.BLACKOUT)
+			_show_note("SAFE", "Click. Safe opens. The lights go out.")
+		else:
+			modal.set_status("Beep. Access denied."))
 
 func _on_zone_stub(_user: Node, zone: Node) -> void:
 	print("[host] interacted: %s (no handler yet)" % zone.label)
