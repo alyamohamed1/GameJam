@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://deskstage0"]
+[gd_scene load_steps=3 format=3 uid="uid://deskstage0"]
 
 [ext_resource type="Script" path="res://player2/desk.gd" id="1_desk"]
+[ext_resource type="PackedScene" uid="uid://monitorstage1" path="res://player2/monitor.tscn" id="2_mon"]
 
 [node name="Desk" type="CanvasLayer"]
 layer = 10
@@ -17,45 +18,64 @@ anchor_bottom = 1.0
 color = Color(0.05, 0.05, 0.07, 1)
 mouse_filter = 2
 
-[node name="Label" type="Label" parent="Root"]
-offset_left = 8.0
-offset_top = 4.0
+[node name="Monitors" type="Control" parent="Root"]
+offset_right = 480.0
+offset_bottom = 210.0
+mouse_filter = 2
+
+[node name="Kitchen" parent="Root/Monitors" instance=ExtResource("2_mon")]
+offset_right = 160.0
+offset_bottom = 100.0
+cam_pos = Vector2(160, 135)
+room_label = "KITCHEN (FEEDER CAM)"
+always_live = true
+
+[node name="Living" parent="Root/Monitors" instance=ExtResource("2_mon")]
+offset_left = 160.0
+offset_right = 320.0
+offset_bottom = 100.0
+cam_pos = Vector2(480, 135)
+room_label = "LIVING"
+
+[node name="Bedroom" parent="Root/Monitors" instance=ExtResource("2_mon")]
+offset_left = 320.0
+offset_right = 480.0
+offset_bottom = 100.0
+cam_pos = Vector2(800, 135)
+room_label = "BEDROOM"
+
+[node name="Entrance" parent="Root/Monitors" instance=ExtResource("2_mon")]
+offset_left = 80.0
+offset_top = 100.0
 offset_right = 240.0
-offset_bottom = 18.0
-text = "MONITOR 1 — KITCHEN (FEEDER CAM)"
-theme_override_font_sizes/font_size = 10
+offset_bottom = 200.0
+cam_pos = Vector2(160, 405)
+room_label = "ENTRANCE"
 
-[node name="Monitor" type="SubViewportContainer" parent="Root"]
-offset_left = 8.0
-offset_top = 22.0
-offset_right = 248.0
-offset_bottom = 157.0
-stretch = true
-
-[node name="SubViewport" type="SubViewport" parent="Root/Monitor"]
-handle_input_locally = false
-size = Vector2i(240, 135)
-render_target_update_mode = 4
-
-[node name="Camera2D" type="Camera2D" parent="Root/Monitor/SubViewport"]
-position = Vector2(160, 135)
-zoom = Vector2(0.5, 0.5)
+[node name="Hallway" parent="Root/Monitors" instance=ExtResource("2_mon")]
+offset_left = 240.0
+offset_top = 100.0
+offset_right = 400.0
+offset_bottom = 200.0
+cam_pos = Vector2(480, 405)
+room_label = "HALLWAY"
 
 [node name="Devices" type="Panel" parent="Root"]
 offset_left = 8.0
-offset_top = 165.0
-offset_right = 248.0
-offset_bottom = 230.0
+offset_top = 215.0
+offset_right = 472.0
+offset_bottom = 265.0
 
-[node name="VBox" type="VBoxContainer" parent="Root/Devices"]
+[node name="HBox" type="HBoxContainer" parent="Root/Devices"]
 offset_left = 8.0
-offset_top = 6.0
-offset_right = 232.0
-offset_bottom = 59.0
+offset_top = 4.0
+offset_right = 456.0
+offset_bottom = 46.0
 
-[node name="Title" type="Label" parent="Root/Devices/VBox"]
-text = "DEVICES"
-theme_override_font_sizes/font_size = 10
-
-[node name="FeederBtn" type="Button" parent="Root/Devices/VBox"]
+[node name="FeederBtn" type="Button" parent="Root/Devices/HBox"]
 text = "Trigger Feeder"
+custom_minimum_size = Vector2(140, 0)
+
+[node name="PhaseLabel" type="Label" parent="Root/Devices/HBox"]
+text = "Phase: PRE_USB"
+theme_override_font_sizes/font_size = 10
