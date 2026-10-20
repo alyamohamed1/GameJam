@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://cuoyj4ww8jbnu"]
+
+[ext_resource type="Script" path="res://devices/hide_spot.gd" id="1_hs"]
+
+[sub_resource type="RectangleShape2D" id="HideShape"]
+size = Vector2(40, 40)
+
+[node name="HideSpot" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_hs")
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+shape = SubResource("HideShape")

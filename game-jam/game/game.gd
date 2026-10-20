@@ -18,10 +18,19 @@ var laptop_unlocked: bool = false
 var has_key: bool = false
 # Set true when burglar uses the key on the bedroom door.
 var door_unlocked: bool = false
+# Set true while burglar is standing inside a hide spot (bathroom or
+# closet). Dog detection ignores burglar while this is true.
+var burglar_hidden: bool = false
 
 const FEEDER_COOLDOWN := 20.0
 const FEEDER_EAT_TIME := 5.0
 var feeder_cooldown: float = 0.0
+
+func _ready() -> void:
+	# Debug: show red outlines over every collider at runtime. Helps the
+	# builder line up walls against the map art without opening the editor.
+	# Flip the const to false before export.
+	get_tree().debug_collisions_hint = true
 
 func _process(delta: float) -> void:
 	if feeder_cooldown > 0.0:

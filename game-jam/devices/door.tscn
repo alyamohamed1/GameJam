@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://doorstage1"]
+
+[ext_resource type="Script" path="res://devices/door.gd" id="1_door"]
+
+[sub_resource type="RectangleShape2D" id="DoorBodyShape"]
+size = Vector2(10, 60)
+
+[sub_resource type="RectangleShape2D" id="DoorTriggerShape"]
+size = Vector2(40, 80)
+
+[node name="Door" type="Node2D"]
+script = ExtResource("1_door")
+
+[node name="Collider" type="StaticBody2D" parent="."]
+collision_layer = 1
+
+[node name="Shape" type="CollisionShape2D" parent="Collider"]
+shape = SubResource("DoorBodyShape")
+
+[node name="Visual" type="ColorRect" parent="."]
+offset_left = -5.0
+offset_top = -30.0
+offset_right = 5.0
+offset_bottom = 30.0
+color = Color(0.45, 0.3, 0.15, 1)
+
+[node name="Trigger" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 1
+
+[node name="Shape" type="CollisionShape2D" parent="Trigger"]
+shape = SubResource("DoorTriggerShape")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -40.0
+offset_top = -46.0
+offset_right = 40.0
+offset_bottom = -32.0
+text = "[E] Door"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
