@@ -1,9 +1,12 @@
 extends Node2D
-# Shared world. Builds walls procedurally (easier to tune than hand-authored
-# .tscn SubResources). Host adds a follow Camera2D to the burglar. Client
-# swaps to the desk UI.
+# Shared world. Builds walls procedurally. Host wires puzzle logic for each
+# interactable zone and owns the modal UI; client just shows the desk.
 
 const DESK_SCENE := preload("res://player2/desk.tscn")
+const MODAL_NOTE := preload("res://ui/modal_note.tscn")
+const MODAL_PASSWORD := preload("res://ui/modal_password.tscn")
+
+const LAPTOP_PASSWORD := "Biscuit2019"
 
 # World size: 960 x 540 = two viewport widths/heights (viewport is 480 x 270).
 const WORLD_SIZE := Vector2(960, 540)
@@ -25,54 +28,32 @@ func _ready() -> void:
 		burglar.add_child(cam)
 		cam.make_current()
 		_connect_zones()
+		Game.set_phase(Game.Phase.PRE_USB)
 	else:
 		var desk := DESK_SCENE.instantiate()
 		get_tree().root.call_deferred("add_child", desk)
 
-func _connect_zones() -> void:
-	for z in zones_root.get_children():
-		if z.has_signal("interacted"):
-			z.interacted.connect(_on_zone_interacted.bind(z))
+# ---- Walls ----
 
-func _on_zone_interacted(_user: Node, zone: Node) -> void:
-	print("[host] interacted: %s" % zone.label)
-
-# Build perimeter + interior walls with doorway gaps. Each wall segment is a
-# StaticBody2D with a RectangleShape2D collider plus a matching ColorRect so
-# it's visible without art assets. Doorways are expressed as (segment_pos,
-# segment_length) pairs returned from _segments_with_gaps.
 func _build_walls() -> void:
-	# Perimeter (no gaps).
 	_add_wall_h(0.0, WORLD_SIZE.x, 0.0)
 	_add_wall_h(0.0, WORLD_SIZE.x, WORLD_SIZE.y - WALL_THICKNESS)
 	_add_wall_v(0.0, WORLD_SIZE.y, 0.0)
 	_add_wall_v(0.0, WORLD_SIZE.y, WORLD_SIZE.x - WALL_THICKNESS)
-
-	# Middle horizontal wall at y = 270 between top row and bottom row.
-	# Doorways centered at x = 160 (Kitchen <-> Entrance),
-	# x = 480 (Living <-> Hallway), x = 800 (Bedroom <-> Empty).
 	var mid_y := 270.0 - WALL_THICKNESS * 0.5
 	for seg in _segments_with_gaps(0.0, WORLD_SIZE.x, [160.0, 480.0, 800.0]):
 		_add_wall_h(seg.x, seg.y, mid_y)
-
-	# Vertical wall at x = 320 (Kitchen|Living, Entrance|Hallway).
-	# One doorway per row, centered vertically in each row (y = 135 and y = 405).
 	var left_vx := 320.0 - WALL_THICKNESS * 0.5
 	for seg in _segments_with_gaps(0.0, WORLD_SIZE.y, [135.0, 405.0]):
 		_add_wall_v(seg.x, seg.y, left_vx)
-
-	# Vertical wall at x = 640 (Living|Bedroom, Hallway|Empty).
 	var right_vx := 640.0 - WALL_THICKNESS * 0.5
 	for seg in _segments_with_gaps(0.0, WORLD_SIZE.y, [135.0, 405.0]):
 		_add_wall_v(seg.x, seg.y, right_vx)
 
-# Returns a list of (start, length) Vector2 segments covering [axis_start,
-# axis_end], with DOORWAY_WIDTH-wide gaps centered at each value in gap_centers.
 func _segments_with_gaps(axis_start: float, axis_end: float, gap_centers: Array) -> Array:
 	var cursor := axis_start
 	var segs: Array = []
 	var half := DOORWAY_WIDTH * 0.5
-	# Sort gap_centers ascending just in case.
 	var centers := gap_centers.duplicate()
 	centers.sort()
 	for c in centers:
@@ -108,3 +89,55 @@ func _add_wall(rect: Rect2) -> void:
 	visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	body.add_child(visual)
 	walls_root.add_child(body)
+
+# ---- Puzzle wiring (host only) ----
+
+func _connect_zones() -> void:
+	for z in zones_root.get_children():
+		if not z.has_signal("interacted"):
+			continue
+		match String(z.name):
+			"Fridge":
+				z.interacted.connect(_on_fridge)
+			"Laptop":
+				z.interacted.connect(_on_laptop)
+			"UsbPort":
+				z.interacted.connect(_on_usb)
+			_:
+				z.interacted.connect(_on_zone_stub.bind(z))
+
+func _on_fridge(_user: Node) -> void:
+	_show_note("FRIDGE", "A sticky note: password is\n\nBiscuit2019")
+
+func _on_laptop(_user: Node) -> void:
+	if Game.laptop_unlocked:
+		_show_note("HOME LAPTOP", "Logged in. Plug the USB in.")
+		return
+	var modal: CanvasLayer = MODAL_PASSWORD.instantiate()
+	get_tree().root.add_child(modal)
+	modal.setup("HOME LAPTOP")
+	modal.submitted.connect(func(text: String) -> void:
+		if text.strip_edges().to_lower() == LAPTOP_PASSWORD.to_lower():
+			Game.laptop_unlocked = true
+			modal.close()
+			_show_note("HOME LAPTOP", "LOGGED IN. Plug the USB in.")
+		else:
+			modal.set_status("Access denied.\nHint: where the milk lives."))
+
+func _on_usb(_user: Node) -> void:
+	if not Game.laptop_unlocked:
+		_show_note("USB PORT", "Laptop is locked. Find the password first.")
+		return
+	if Game.phase == Game.Phase.PRE_USB:
+		Game.set_phase(Game.Phase.POST_USB)
+		_show_note("USB PORT", "USB plugged in. Hacker is online.")
+	else:
+		_show_note("USB PORT", "USB already plugged in.")
+
+func _on_zone_stub(_user: Node, zone: Node) -> void:
+	print("[host] interacted: %s (no handler yet)" % zone.label)
+
+func _show_note(title: String, body: String) -> void:
+	var modal: CanvasLayer = MODAL_NOTE.instantiate()
+	get_tree().root.add_child(modal)
+	modal.setup(title, body)

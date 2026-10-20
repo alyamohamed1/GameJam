@@ -16,6 +16,10 @@ func _physics_process(_delta: float) -> void:
 		return
 	if not multiplayer.is_server():
 		return
+	# Freeze while any blocking modal is open on the host.
+	if Game.modal_open:
+		velocity = Vector2.ZERO
+		return
 	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var s := speed
 	if Input.is_action_pressed("run"):
