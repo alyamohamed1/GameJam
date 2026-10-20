@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://hallwaymon1"]
+
+[ext_resource type="Script" path="res://player2/hallway_monitor.gd" id="1_hall"]
+
+[node name="HallwayMonitor" type="Control"]
+custom_minimum_size = Vector2(160, 100)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+script = ExtResource("1_hall")
+
+[node name="Title" type="Label" parent="."]
+offset_right = 160.0
+offset_bottom = 10.0
+text = "HALLWAY"
+theme_override_font_sizes/font_size = 8
+horizontal_alignment = 1
+
+[node name="Clip" type="Polygon2D" parent="."]
+position = Vector2(0, 10)
+polygon = PackedVector2Array(0, 0, 160, 0, 160, 90, 0, 90)
+clip_children = 1
+color = Color(0, 0, 0, 1)
+
+[node name="Container" type="SubViewportContainer" parent="Clip"]
+offset_right = 160.0
+offset_bottom = 90.0
+stretch = true
+texture_filter = 3
+mouse_filter = 2
+
+[node name="SubViewport" type="SubViewport" parent="Clip/Container"]
+handle_input_locally = false
+size = Vector2i(160, 240)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="Clip/Container/SubViewport"]
+
+[node name="Buttons" type="Control" parent="."]
+offset_top = 10.0
+offset_right = 160.0
+offset_bottom = 100.0
+mouse_filter = 2
+
+[node name="Up" type="Button" parent="Buttons"]
+offset_left = 140.0
+offset_top = 2.0
+offset_right = 158.0
+offset_bottom = 20.0
+text = "^"
+theme_override_font_sizes/font_size = 9
+modulate = Color(1, 1, 1, 0.8)
+
+[node name="Down" type="Button" parent="Buttons"]
+offset_left = 140.0
+offset_top = 70.0
+offset_right = 158.0
+offset_bottom = 88.0
+text = "v"
+theme_override_font_sizes/font_size = 9
+modulate = Color(1, 1, 1, 0.8)
+
+[node name="Overlay" type="Control" parent="."]
+offset_top = 10.0
+offset_right = 160.0
+offset_bottom = 100.0
+mouse_filter = 2
+
+[node name="Bg" type="ColorRect" parent="Overlay"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.03, 0.03, 0.04, 1)
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="Overlay"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "NO SIGNAL"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 10
+modulate = Color(0.6, 0.6, 0.6, 1)

@@ -1,35 +1,33 @@
 class_name HouseNav extends RefCounted
-# Room-graph pathfinder for the 7-room house. Each edge stores the doorway
-# center and the unit direction from room_a toward room_b (perpendicular
-# to the wall). find_path emits two waypoints per crossing: the doorway
-# center plus a point BUFFER px past the wall into the destination room,
-# so a chasing dog clears wall collision before turning toward its next
-# target.
-#
-# Closet rect sits inside Kitchen; it's listed first so room_at() returns
-# "closet" for points inside the nook.
+# Room-graph pathfinder for the 6-room house (en-suite bathroom, closet
+# is a hide-spot nook inside the bedroom with no door). Each edge stores
+# the doorway center and the unit direction from room_a toward room_b
+# (perpendicular to the wall). find_path emits two waypoints per crossing:
+# the doorway center plus a point BUFFER px past the wall into the
+# destination room, so a chasing dog clears wall collision before turning.
 
 const BUFFER := 25.0
 
+# Rough room rectangles — tight enough to classify a point to its room
+# via room_at(). Walls themselves are placed in the editor; these rects
+# only exist for nav lookups.
 const ROOMS := {
-	"closet":   Rect2(320, 0, 80, 80),
-	"kitchen":  Rect2(0, 0, 400, 400),
-	"living":   Rect2(0, 405, 400, 495),
-	"hallway":  Rect2(410, 0, 340, 900),
-	"office":   Rect2(760, 0, 440, 345),
-	"bathroom": Rect2(760, 355, 440, 245),
-	"bedroom":  Rect2(760, 610, 440, 290),
+	"kitchen":  Rect2(10, 10, 520, 370),
+	"living":   Rect2(10, 395, 520, 500),
+	"hallway":  Rect2(540, 10, 190, 890),
+	"office":   Rect2(740, 10, 460, 345),
+	"bathroom": Rect2(740, 370, 460, 160),
+	"bedroom":  Rect2(540, 455, 660, 440),
 }
 
 # [room_a, room_b, doorway_center, direction_from_a_to_b (unit vector)]
 const EDGES := [
-	["kitchen", "closet",   Vector2(360, 80),   Vector2(0, -1)],
-	["kitchen", "living",   Vector2(130, 400),  Vector2(0, 1)],
-	["kitchen", "hallway",  Vector2(400, 200),  Vector2(1, 0)],
-	["living",  "hallway",  Vector2(400, 650),  Vector2(1, 0)],
-	["office",  "hallway",  Vector2(750, 180),  Vector2(-1, 0)],
-	["office",  "bathroom", Vector2(1000, 350), Vector2(0, 1)],
-	["bedroom", "hallway",  Vector2(750, 750),  Vector2(-1, 0)],
+	["kitchen", "living",   Vector2(361, 380), Vector2(0, 1)],
+	["kitchen", "hallway",  Vector2(532, 318), Vector2(1, 0)],
+	["living",  "hallway",  Vector2(533, 443), Vector2(1, 0)],
+	["office",  "hallway",  Vector2(736, 216), Vector2(-1, 0)],
+	["office",  "bathroom", Vector2(932, 362), Vector2(0, 1)],
+	["bedroom", "hallway",  Vector2(660, 438), Vector2(-1, 0)],
 ]
 
 static func room_at(pos: Vector2) -> String:

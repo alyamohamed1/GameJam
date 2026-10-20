@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://deskstage0"]
+[gd_scene load_steps=4 format=3 uid="uid://deskstage0"]
 
 [ext_resource type="Script" path="res://player2/desk.gd" id="1_desk"]
-[ext_resource type="PackedScene" uid="uid://monitorstage1" path="res://player2/monitor.tscn" id="2_mon"]
+[ext_resource type="PackedScene" uid="uid://3fv2i014ns4q" path="res://player2/monitor.tscn" id="2_mon"]
+[ext_resource type="PackedScene" uid="uid://hallwaymon1" path="res://player2/hallway_monitor.tscn" id="3_hall"]
 
 [node name="Desk" type="CanvasLayer"]
 layer = 10
@@ -26,8 +27,7 @@ mouse_filter = 2
 [node name="Kitchen" parent="Root/Monitors" instance=ExtResource("2_mon")]
 offset_right = 160.0
 offset_bottom = 100.0
-cam_pos = Vector2(200, 200)
-cam_zoom = 0.35
+room_rect = Rect2(10, 10, 520, 370)
 room_label = "KITCHEN (FEEDER)"
 always_live = true
 
@@ -35,39 +35,44 @@ always_live = true
 offset_left = 160.0
 offset_right = 320.0
 offset_bottom = 100.0
-cam_pos = Vector2(200, 650)
-cam_zoom = 0.3
+room_rect = Rect2(10, 395, 520, 500)
 room_label = "LIVING"
 
 [node name="Bedroom" parent="Root/Monitors" instance=ExtResource("2_mon")]
 offset_left = 320.0
 offset_right = 480.0
 offset_bottom = 100.0
-cam_pos = Vector2(980, 755)
-cam_zoom = 0.3
+room_rect = Rect2(540, 455, 660, 440)
 room_label = "BEDROOM"
 
 [node name="Office" parent="Root/Monitors" instance=ExtResource("2_mon")]
-offset_left = 80.0
+offset_left = 0.0
 offset_top = 100.0
-offset_right = 240.0
+offset_right = 160.0
 offset_bottom = 200.0
-cam_pos = Vector2(980, 170)
-cam_zoom = 0.3
+room_rect = Rect2(740, 10, 460, 345)
 room_label = "OFFICE"
+
+[node name="Hallway" parent="Root/Monitors" instance=ExtResource("3_hall")]
+offset_left = 160.0
+offset_top = 100.0
+offset_right = 320.0
+offset_bottom = 200.0
+room_rect = Rect2(540, 10, 190, 890)
+room_label = "HALLWAY"
 
 [node name="HomeComputer" type="Panel" parent="Root"]
 offset_left = 320.0
-offset_top = 110.0
+offset_top = 100.0
 offset_right = 478.0
 offset_bottom = 200.0
 
 [node name="VBox" type="VBoxContainer" parent="Root/HomeComputer"]
 offset_left = 4.0
-offset_top = 2.0
-offset_right = 154.0
-offset_bottom = 86.0
-theme_override_constants/separation = 2
+offset_top = 4.0
+offset_right = 144.0
+offset_bottom = 196.0
+theme_override_constants/separation = 4
 
 [node name="Title" type="Label" parent="Root/HomeComputer/VBox"]
 text = "HOME COMPUTER"
