@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://housestage0"]
+[gd_scene load_steps=3 format=3 uid="uid://housestage0"]
 
 [ext_resource type="Script" path="res://level/house.gd" id="1_house"]
 [ext_resource type="PackedScene" uid="uid://burglarstage0" path="res://player1/burglar.tscn" id="2_burglar"]
@@ -6,12 +6,51 @@
 [node name="House" type="Node2D"]
 script = ExtResource("1_house")
 
-[node name="Floor" type="ColorRect" parent="."]
+[node name="Floors" type="Node2D" parent="."]
+
+[node name="Kitchen" type="ColorRect" parent="Floors"]
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 480.0
+offset_right = 320.0
 offset_bottom = 270.0
-color = Color(0.18, 0.18, 0.22, 1)
+color = Color(0.17, 0.19, 0.22, 1)
+
+[node name="Living" type="ColorRect" parent="Floors"]
+offset_left = 320.0
+offset_top = 0.0
+offset_right = 640.0
+offset_bottom = 270.0
+color = Color(0.19, 0.17, 0.22, 1)
+
+[node name="Bedroom" type="ColorRect" parent="Floors"]
+offset_left = 640.0
+offset_top = 0.0
+offset_right = 960.0
+offset_bottom = 270.0
+color = Color(0.22, 0.17, 0.20, 1)
+
+[node name="Entrance" type="ColorRect" parent="Floors"]
+offset_left = 0.0
+offset_top = 270.0
+offset_right = 320.0
+offset_bottom = 540.0
+color = Color(0.18, 0.21, 0.19, 1)
+
+[node name="Hallway" type="ColorRect" parent="Floors"]
+offset_left = 320.0
+offset_top = 270.0
+offset_right = 640.0
+offset_bottom = 540.0
+color = Color(0.16, 0.16, 0.19, 1)
+
+[node name="Empty" type="ColorRect" parent="Floors"]
+offset_left = 640.0
+offset_top = 270.0
+offset_right = 960.0
+offset_bottom = 540.0
+color = Color(0.20, 0.20, 0.20, 1)
+
+[node name="Walls" type="Node2D" parent="."]
 
 [node name="Burglar" parent="." instance=ExtResource("2_burglar")]
-position = Vector2(240, 135)
+position = Vector2(160, 405)

@@ -1,31 +1,42 @@
-[gd_scene format=3 uid="uid://deskstage0"]
+[gd_scene load_steps=2 format=3 uid="uid://deskstage0"]
 
 [ext_resource type="Script" path="res://player2/desk.gd" id="1_desk"]
 
-[node name="Desk" type="Control"]
+[node name="Desk" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_desk")
+
+[node name="Root" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-script = ExtResource("1_desk")
 
-[node name="Label" type="Label" parent="."]
+[node name="Background" type="ColorRect" parent="Root"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.05, 0.07, 1)
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="Root"]
 offset_left = 8.0
 offset_top = 4.0
-offset_right = 200.0
-offset_bottom = 20.0
-text = "MONITOR 1 — KITCHEN"
+offset_right = 240.0
+offset_bottom = 18.0
+text = "MONITOR 1 — KITCHEN (FEEDER CAM)"
+theme_override_font_sizes/font_size = 10
 
-[node name="Monitor" type="SubViewportContainer" parent="."]
+[node name="Monitor" type="SubViewportContainer" parent="Root"]
 offset_left = 8.0
-offset_top = 24.0
+offset_top = 22.0
 offset_right = 248.0
-offset_bottom = 159.0
+offset_bottom = 157.0
 stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="Monitor"]
+[node name="SubViewport" type="SubViewport" parent="Root/Monitor"]
 handle_input_locally = false
 size = Vector2i(240, 135)
 render_target_update_mode = 4
 
-[node name="Camera2D" type="Camera2D" parent="Monitor/SubViewport"]
-position = Vector2(240, 135)
+[node name="Camera2D" type="Camera2D" parent="Root/Monitor/SubViewport"]
+position = Vector2(160, 135)
+zoom = Vector2(0.5, 0.5)
