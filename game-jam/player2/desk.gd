@@ -48,9 +48,12 @@ func _on_phase_changed(p: int) -> void:
 func _apply_phase(p: int) -> void:
 	phase_label.text = "Phase: %s" % _phase_name(p)
 	var all_live := p >= Game.Phase.POST_USB
+	var night_vision := p >= Game.Phase.BLACKOUT
 	for m in monitors_root.get_children():
 		if m.has_method("set_live"):
 			m.set_live(all_live or m.always_live)
+		# Green CRT tint on all monitors once blackout starts.
+		m.modulate = Color(0.4, 1.0, 0.5) if night_vision else Color(1, 1, 1)
 	hc_locked.visible = not all_live
 
 func _phase_name(p: int) -> String:

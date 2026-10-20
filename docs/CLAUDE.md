@@ -3,9 +3,9 @@
 Read this first, every session. Full design: `docs/game-context.md`. Full build plan: `docs/build-plan.md`.
 
 ## Project facts
-- Godot 4 (exact version: FILL IN from Help → About), **typed GDScript only**. Never write Godot 3 syntax
+- Godot 4.7.2, **typed GDScript only**. Never write Godot 3 syntax
   (`KinematicBody2D`, `export var`, `onready var`, `yield`, `remote func`, `TileMap`, `move_and_slide(velocity)`).
-- 2D, base resolution 480×270, 16×16 tiles, Compatibility renderer.
+- 2D, base resolution 480×270, 16×16 tiles, Compatibility renderer. World size 1200×900 (map art scaled 0.829x).
 - The builder is a beginner using Godot for the first time: when you add or change a scene, tell the user exactly
   which nodes exist and where each script is attached. Keep code simple and commented. Do one small task at a time.
 - Godot binary on macOS: `/Applications/Godot.app/Contents/MacOS/Godot`
@@ -15,7 +15,7 @@ We build in stages and finish each one before starting the next (see "Build in s
 - Stage 0: connected skeleton — host/join, burglar square moves and syncs, Player 2 sees one monitor.
 - Stage 1: basic version — full loop with placeholders, NO vacuum, NO shaders, NO checkpoints, NO art/sound.
 - Stage 2: full version.
-**Current stage: 0** (update this line as you go). Do not build features from a later stage.
+**Current stage: 1 (functionally complete)** — polish + art swap pending; Stage 2 next. Do not build features from a later stage.
 
 ## Architecture rules (do not break)
 - Both machines load the same `level/house.tscn`. No MultiplayerSpawner; every moving thing is placed in the scene.
@@ -26,10 +26,19 @@ We build in stages and finish each one before starting the next (see "Build in s
   Client→host RPCs use `@rpc("any_peer", ...)` and the host checks `multiplayer.is_server()`.
   Host→both RPCs use `@rpc("authority", "call_local", "reliable")`.
 - Positions sync with `MultiplayerSynchronizer` (position, facing/rotation, state int).
-- Autoloads: `Net` (`net/net.gd`) and `Game` (`game/game.gd`, holds `Phase` enum, `phase_changed` signal, `set_phase()`).
+- Autoloads: `Net` (`net/net.gd`) and `Game` (`game/game.gd`, holds `Phase` enum, `phase_changed` signal, `set_phase()`,
+  plus `has_key`, `door_unlocked`, `burglar_hidden`, `laptop_unlocked`, `modal_open`, `feeder_cooldown`, `run_time`).
   Every script reacts to `Game.phase_changed` rather than polling.
-- Client deletes the `Darkness` CanvasModulate and disables the burglar's light; Player 2 monitors are
-  SubViewports sharing `get_tree().root.world_2d`.
+- Dog AI: no sight cone. Detection = same-room via `HouseNav.room_at()` + 0.3 s notice → CHASE. Catch on contact.
+  Hide spots (Bathroom, Closet) flip `Game.burglar_hidden`; dog ignores while true, SEARCH on becoming hidden.
+- Dog visibility: Sprite modulate.a toggled each physics frame on host (same room = visible, else transparent).
+  Collider debug outlines on the dog are forced to alpha 0 so P1 can't track by cyan boxes.
+- Fog of war: host-only `CanvasLayer` with `follow_viewport_enabled`; one `Polygon2D` per room; the burglar's current
+  room's overlay hides, others stay dim. Client never spawns fog so monitors share `world_2d` without it.
+- BLACKOUT visuals: host adds `CanvasModulate` + radial `PointLight2D` on burglar. Client monitors get a green modulate.
+- Player 2 monitors are SubViewports sharing `get_tree().root.world_2d`, with a `Polygon2D` parent using
+  `clip_children` to mask each monitor to the room's painted outline.
+- Debug: `Game` autoload forces `get_tree().debug_collisions_hint = true` so colliders show as red/cyan at runtime.
 
 ## Folders and workflow
 `net/ game/ level/ player1/ dog/ player2/ devices/ ui/ art/ audio/ shaders/ docs/`
@@ -58,6 +67,9 @@ Fix every error before saying you're done. You cannot see the game window: ask t
 
 ## Puzzle data
 Laptop password `Biscuit2019` (case-insensitive). Ciphertext `VHYHQ WZR QLQH IRXU`, Caesar shift 3 → 7294 = safe code.
+Bedroom key lives in the Living Room bookshelf (`Bookshelf` zone sets `Game.has_key = true`).
+Bedroom Door node (`devices/door.tscn`) blocks the opening at (660, 438) until unlocked by key.
+Hide spots: `BathroomHide` (en-suite inside Office) and `ClosetHide` (nook inside Bedroom).
 Phases: LOBBY → PRE_USB → POST_USB → BLACKOUT → VICTORY, FAIL from any active phase.
 
 ## Git

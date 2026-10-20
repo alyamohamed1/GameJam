@@ -24,6 +24,8 @@ const HEARING_RANGE := 160.0
 const INVESTIGATE_SNIFF := 2.0
 const INVESTIGATE_TIMEOUT := 6.0
 const CHASE_REPATH_INTERVAL := 0.25 # how often to recompute nav to burglar
+const CHASE_STUCK_TIME := 2.0       # if the dog hasn't moved for this long during chase, force a repath
+const CHASE_STUCK_MIN_DIST := 2.0   # per-tick distance under which we count as 'stuck'
 const SEARCH_DURATION := 5.0        # how long to roam a room after losing scent
 const SEARCH_WAYPOINT_HOLD := 1.0   # how long between picking a new wander point
 const TURN_SPEED := 6.0
@@ -44,6 +46,8 @@ var _sniff_timer: float = 0.0
 var _distract_timer: float = 0.0
 var _eat_timer: float = 0.0
 var _chase_repath_timer: float = 0.0
+var _chase_stuck_timer: float = 0.0
+var _chase_last_pos: Vector2 = Vector2.ZERO
 var _search_timer: float = 0.0
 var _search_wander_timer: float = 0.0
 
@@ -191,6 +195,18 @@ func _tick_distracted(delta: float) -> void:
 		_path.clear()
 
 func _tick_chase(delta: float) -> void:
+	# Stuck detection: if the dog hasn't moved more than CHASE_STUCK_MIN_DIST
+	# over CHASE_STUCK_TIME seconds, force a repath so furniture doesn't
+	# permanently trap it on a corner.
+	if global_position.distance_to(_chase_last_pos) < CHASE_STUCK_MIN_DIST:
+		_chase_stuck_timer += delta
+	else:
+		_chase_stuck_timer = 0.0
+	_chase_last_pos = global_position
+	if _chase_stuck_timer >= CHASE_STUCK_TIME:
+		_chase_stuck_timer = 0.0
+		_chase_repath_timer = 0.0
+		_path.clear()
 	_chase_repath_timer -= delta
 	if _chase_repath_timer <= 0.0 or _path.is_empty():
 		_chase_repath_timer = CHASE_REPATH_INTERVAL
@@ -219,6 +235,8 @@ func _tick_search(delta: float) -> void:
 func _begin_chase() -> void:
 	_set_state(State.CHASE)
 	_chase_repath_timer = 0.0
+	_chase_stuck_timer = 0.0
+	_chase_last_pos = global_position
 	_path.clear()
 
 func _begin_search() -> void:

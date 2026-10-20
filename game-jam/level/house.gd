@@ -44,6 +44,36 @@ func _on_phase_changed(p: int) -> void:
 	elif p == Game.Phase.VICTORY:
 		var victory := VICTORY_SCENE.instantiate()
 		add_child(victory)
+	elif p == Game.Phase.BLACKOUT and multiplayer.is_server():
+		_apply_blackout()
+
+func _apply_blackout() -> void:
+	# Host-only. Darken the whole canvas with a CanvasModulate and attach a
+	# small radial Light2D to the burglar so P1 can only see a few tiles
+	# around themselves. Monitors on the client get a green tint via desk.gd.
+	var dim := CanvasModulate.new()
+	dim.name = "BlackoutDim"
+	dim.color = Color(0.12, 0.12, 0.18)
+	add_child(dim)
+	var light := PointLight2D.new()
+	light.name = "BurglarLight"
+	light.texture = _make_radial_light_texture()
+	light.texture_scale = 0.6
+	light.energy = 1.6
+	burglar.add_child(light)
+
+func _make_radial_light_texture() -> Texture2D:
+	var grad := Gradient.new()
+	grad.add_point(0.0, Color(1, 1, 1, 1))
+	grad.add_point(1.0, Color(1, 1, 1, 0))
+	var tex := GradientTexture2D.new()
+	tex.gradient = grad
+	tex.fill = GradientTexture2D.FILL_RADIAL
+	tex.fill_from = Vector2(0.5, 0.5)
+	tex.fill_to = Vector2(1.0, 0.5)
+	tex.width = 256
+	tex.height = 256
+	return tex
 
 # ---- Puzzle wiring (host only) ----
 
