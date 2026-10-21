@@ -16,6 +16,17 @@ const FULLSCREEN_SCENE := preload("res://player2/monitor_fullscreen.tscn")
 @onready var hc_plus: Button = $Root/HomeComputer/VBox/ShiftRow/Plus
 @onready var hc_cipher_edit: LineEdit = $Root/HomeComputer/VBox/CipherEdit
 
+# Transparent screen windows in P2_Monitors.png (image px). Monitors are laid
+# out from these at runtime so they track the background's cover-scaling at
+# any window aspect.
+const BG_SIZE := Vector2(1536, 1024)
+const MONITOR_HOLES := {
+	"Kitchen": Rect2(295, 91, 411, 222),
+	"Living": Rect2(784, 91, 379, 221),
+	"Office": Rect2(295, 390, 411, 217),
+	"Bedroom": Rect2(784, 390, 379, 217),
+}
+
 var _shift: int = 0
 var _decrypt_played: bool = false
 
@@ -36,6 +47,24 @@ func _ready() -> void:
 			m.clicked.connect(_on_monitor_clicked)
 	_update_cipher_display()
 	_apply_phase(Game.phase)
+	$Root.resized.connect(_layout_monitors)
+	_layout_monitors()
+
+func _layout_monitors() -> void:
+	var view: Vector2 = $Root.size
+	var s: float = max(view.x / BG_SIZE.x, view.y / BG_SIZE.y)
+	var origin := (view - BG_SIZE * s) * 0.5
+	monitors_root.position = Vector2.ZERO
+	for n in MONITOR_HOLES:
+		var m: Control = monitors_root.get_node_or_null(n)
+		if m == null:
+			continue
+		var r: Rect2 = MONITOR_HOLES[n]
+		var sc := Vector2(r.size.x * s / 160.0, r.size.y * s / 90.0)
+		m.size = Vector2(160, 100)
+		m.scale = sc
+		# Screen area starts 10px below the monitor origin (title strip).
+		m.position = origin + r.position * s - Vector2(0, 10.0 * sc.y)
 
 func _on_monitor_clicked(monitor: Node) -> void:
 	# Ignore clicks on NO SIGNAL monitors.

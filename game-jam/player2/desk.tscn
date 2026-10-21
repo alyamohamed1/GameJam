@@ -18,55 +18,63 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Background" type="TextureRect" parent="Root" unique_id=1985260329]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0600001
+anchor_bottom = 1.0630001
+offset_right = 0.19998169
+offset_bottom = -0.010009766
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("3_bg")
-expand_mode = 1
+expand_mode = 3
 stretch_mode = 6
 
 [node name="Monitors" type="Control" parent="Root" unique_id=249168025]
 anchors_preset = 0
-offset_right = 480.0
-offset_bottom = 270.0
+offset_right = 509.0
+offset_bottom = 284.0
 mouse_filter = 2
 
 [node name="Kitchen" parent="Root/Monitors" unique_id=1880249531 instance=ExtResource("2_mon")]
-anchors_preset = 0
-offset_left = 91.0
-offset_top = -7.0
-offset_right = 251.0
-offset_bottom = 93.0
-scale = Vector2(0.817763, 0.7941605)
+layout_mode = 0
+offset_left = 102.0
+offset_top = 8.0
+offset_right = 262.0
+offset_bottom = 108.0
+scale = Vector2(0.8025, 0.7711)
 room_rect = Rect2(10, 10, 520, 370)
 room_label = "KITCHEN"
 always_live = true
 
 [node name="Living" parent="Root/Monitors" unique_id=2067903139 instance=ExtResource("2_mon")]
-anchors_preset = 0
-offset_left = 240.0
-offset_top = 25.0
-offset_right = 390.0
-offset_bottom = 115.0
+layout_mode = 0
+offset_left = 254.00003
+offset_top = 2.0
+offset_right = 414.00003
+offset_bottom = 102.0
+scale = Vector2(0.74, 0.7678)
 room_rect = Rect2(10, 395, 520, 500)
 room_label = "LIVING"
 
 [node name="Office" parent="Root/Monitors" unique_id=1515714859 instance=ExtResource("2_mon")]
-anchors_preset = 0
-offset_left = 90.0
-offset_top = 125.0
-offset_right = 230.0
-offset_bottom = 215.0
+layout_mode = 0
+offset_left = 83.0
+offset_top = 100.0
+offset_right = 243.0
+offset_bottom = 200.0
+scale = Vector2(0.8025, 0.7533)
 room_rect = Rect2(740, 10, 460, 345)
 room_label = "OFFICE"
 
 [node name="Bedroom" parent="Root/Monitors" unique_id=1821377480 instance=ExtResource("2_mon")]
-anchors_preset = 0
-offset_left = 240.0
-offset_top = 125.0
-offset_right = 390.0
-offset_bottom = 215.0
+layout_mode = 0
+offset_left = 249.00003
+offset_top = 100.0
+offset_right = 409.00003
+offset_bottom = 200.0
+scale = Vector2(0.74, 0.7533)
 room_rect = Rect2(540, 455, 660, 440)
 room_label = "BEDROOM"
 

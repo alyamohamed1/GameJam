@@ -1,23 +1,28 @@
-[gd_scene load_steps=3 format=3 uid="uid://monfull1"]
+[gd_scene format=3 uid="uid://monfull1"]
 
-[ext_resource type="Script" path="res://player2/monitor_fullscreen.gd" id="1_mf"]
-[ext_resource type="Texture2D" path="res://art/P2_onemonitor.png" id="2_bezel"]
+[ext_resource type="Script" uid="uid://b0alk8t8jslj5" path="res://player2/monitor_fullscreen.gd" id="1_mf"]
+[ext_resource type="Texture2D" uid="uid://psd6mfeb7nim" path="res://art/P2_onemonitor.png" id="2_bezel"]
 
-[node name="MonitorFullscreen" type="CanvasLayer"]
+[node name="MonitorFullscreen" type="CanvasLayer" unique_id=1778046901]
 layer = 25
 script = ExtResource("1_mf")
 
-[node name="Root" type="Control" parent="."]
+[node name="Root" type="Control" parent="." unique_id=346844809]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Dim" type="ColorRect" parent="Root"]
+[node name="Dim" type="ColorRect" parent="Root" unique_id=28256839]
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0, 0, 0, 0.75)
 mouse_filter = 1
+color = Color(0, 0, 0, 0.75)
 
-[node name="Bezel" type="TextureRect" parent="Root"]
+[node name="Bezel" type="TextureRect" parent="Root" unique_id=1083982994]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -29,37 +34,38 @@ offset_bottom = 140.0
 texture = ExtResource("2_bezel")
 expand_mode = 1
 stretch_mode = 5
-mouse_filter = 1
 
-[node name="Container" type="SubViewportContainer" parent="Root/Bezel"]
-offset_left = 23.0
-offset_top = 14.0
-offset_right = 416.0
-offset_bottom = 233.0
-stretch = true
+[node name="Container" type="SubViewportContainer" parent="Root/Bezel" unique_id=1827933830]
 texture_filter = 3
+layout_mode = 0
+offset_left = 31.0
+offset_top = 31.0
+offset_right = 415.0
+offset_bottom = 241.0
 mouse_filter = 2
+stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="Root/Bezel/Container"]
+[node name="SubViewport" type="SubViewport" parent="Root/Bezel/Container" unique_id=874784077]
 handle_input_locally = false
-size = Vector2i(393, 219)
+size = Vector2i(384, 210)
 render_target_update_mode = 4
 
-[node name="Camera2D" type="Camera2D" parent="Root/Bezel/Container/SubViewport"]
+[node name="Camera2D" type="Camera2D" parent="Root/Bezel/Container/SubViewport" unique_id=879838096]
 
-[node name="Title" type="Label" parent="Root/Bezel"]
+[node name="Title" type="Label" parent="Root/Bezel" unique_id=878246301]
+modulate = Color(1, 0.7, 0.3, 1)
+layout_mode = 0
 offset_left = 24.0
-offset_top = 0.0
 offset_right = 200.0
 offset_bottom = 12.0
-text = "ROOM"
 theme_override_font_sizes/font_size = 8
-modulate = Color(1, 0.7, 0.3, 1)
+text = "ROOM"
 
-[node name="CloseBtn" type="Button" parent="Root/Bezel"]
+[node name="CloseBtn" type="Button" parent="Root/Bezel" unique_id=2020977317]
+layout_mode = 0
 offset_left = 395.0
 offset_top = 240.0
 offset_right = 420.0
 offset_bottom = 275.0
-text = "X"
 theme_override_font_sizes/font_size = 10
+text = "X"
