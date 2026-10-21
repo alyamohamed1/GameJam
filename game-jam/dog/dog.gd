@@ -13,8 +13,8 @@ extends CharacterBody2D
 
 enum State { PATROL, INVESTIGATE, DISTRACTED, CHASE, SEARCH, ALERT }
 
-const PATROL_SPEED := 40.0
-const CHASE_SPEED := 110.0
+const PATROL_SPEED := 43.0
+const CHASE_SPEED := 115.0
 
 const WAYPOINT_RADIUS := 6.0
 const CATCH_DIST := 20.0
@@ -57,13 +57,12 @@ var _burglar: Node2D = null
 @onready var _bubble: Label = $Bubble
 
 func _ready() -> void:
-	# Sight cone is retired. Keep the node around (dog.tscn hasn't been
-	# changed) but silence it.
 	if _sight:
 		_sight.monitoring = false
 		_sight.visible = false
 	_bubble.hide()
 	Game.noise_at.connect(_on_noise)
+	call_deferred("_add_client_glow")
 	# Hide the dog sprite from Player 1's main viewport. The client's
 	# monitors share world_2d but render via separate SubViewports, which
 	# don't inherit this modulate change because the Sprite ColorRect lives
@@ -247,6 +246,8 @@ func _begin_chase() -> void:
 	_path.clear()
 	SFX.play("dog_bark")
 	SFX.loop("dog_growl", "dog_growl", -6.0)
+	Hints.show_host("hide! bathroom or bedroom closet.", 4.0)
+	Hints.show_client("burglar's spotted. hit the feeder to pull the dog.", 4.0)
 
 func _begin_search() -> void:
 	_set_state(State.SEARCH)
@@ -304,6 +305,40 @@ func distract_at(pos: Vector2) -> void:
 	SFX.loop("dog_eat", "dog_eat", -8.0)
 
 # ---- Signals ----
+
+func _add_client_glow() -> void:
+	# Client-only red halo so P2 can spot the dog on monitors.
+	var peer := multiplayer.multiplayer_peer
+	if peer == null:
+		return
+	if multiplayer.is_server():
+		return
+	if has_node("P2Glow"):
+		return
+	var hl := Sprite2D.new()
+	hl.name = "P2Glow"
+	hl.z_index = -1
+	hl.modulate = Color(1, 0.3, 0.3, 1)
+	hl.texture = _make_glow_tex(Color(1, 0.4, 0.4, 1), Color(1, 0, 0, 0))
+	hl.scale = Vector2(0.9, 0.9)
+	var mat := CanvasItemMaterial.new()
+	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	hl.material = mat
+	add_child(hl)
+
+func _make_glow_tex(center: Color, edge: Color) -> Texture2D:
+	var grad := Gradient.new()
+	grad.add_point(0.0, center)
+	grad.add_point(0.5, Color(center.r, center.g, center.b, 0.6))
+	grad.add_point(1.0, edge)
+	var tex := GradientTexture2D.new()
+	tex.gradient = grad
+	tex.fill = GradientTexture2D.FILL_RADIAL
+	tex.fill_from = Vector2(0.5, 0.5)
+	tex.fill_to = Vector2(1.0, 0.5)
+	tex.width = 128
+	tex.height = 128
+	return tex
 
 func _on_noise(pos: Vector2) -> void:
 	if not multiplayer.is_server():

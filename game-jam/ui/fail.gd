@@ -7,7 +7,17 @@ extends CanvasLayer
 
 func _ready() -> void:
 	SFX.stop_all()
-	SFX.play("alarm")
+	var stream: AudioStreamMP3 = load("res://audio/newestalarmsound.mp3")
+	if stream:
+		stream = stream.duplicate()
+		stream.loop = true
+		var player := AudioStreamPlayer.new()
+		player.name = "AlarmPlayer"
+		player.stream = stream
+		player.volume_db = 0.0
+		player.bus = "Master"
+		add_child(player)
+		player.play()
 	_button.pressed.connect(_on_restart)
 	_button.disabled = not multiplayer.is_server()
 	if _button.disabled:

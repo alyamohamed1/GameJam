@@ -35,7 +35,7 @@ func _ready() -> void:
 	# Debug: show red outlines over every collider at runtime. Helps the
 	# builder line up walls against the map art without opening the editor.
 	# Flip the const to false before export.
-	get_tree().debug_collisions_hint = true
+	get_tree().debug_collisions_hint = false
 
 func _process(delta: float) -> void:
 	if feeder_cooldown > 0.0:

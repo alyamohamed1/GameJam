@@ -6,6 +6,10 @@ extends CanvasLayer
 
 const FULLSCREEN_SCENE := preload("res://player2/monitor_fullscreen.tscn")
 const P2_LAPTOP_SCENE := preload("res://player2/p2_laptop_fullscreen.tscn")
+const MODAL_PASSWORD := preload("res://ui/modal_password.tscn")
+const HOME_PW := "Schopenhaeur2025"
+const GLITCH_TEX := preload("res://art/glitchedoutmonitorsdesk.png")
+const BETRAYED_TEX := preload("res://art/SystemBetrayedYouMessage.png")
 
 @onready var feeder_btn: Button = $Root/Devices/VBox/FeederBtn
 @onready var phase_label: Label = $Root/Devices/VBox/PhaseLabel
@@ -21,6 +25,8 @@ const P2_LAPTOP_SCENE := preload("res://player2/p2_laptop_fullscreen.tscn")
 
 var _shift: int = 0
 var _decrypt_played: bool = false
+var _glitch_overlay: TextureRect = null
+var _betrayed_popup: TextureRect = null
 
 func _ready() -> void:
 	feeder_btn.pressed.connect(func() -> void:
@@ -45,6 +51,59 @@ func _on_laptop_open() -> void:
 	SFX.play("p2_click")
 	var lf: CanvasLayer = P2_LAPTOP_SCENE.instantiate()
 	add_child(lf)
+
+# ---- Blackout glitch mechanic ----
+
+func _begin_glitch() -> void:
+	# Full-screen glitched desk art overlays everything so monitors "disappear".
+	monitors_root.visible = false
+	if _glitch_overlay == null:
+		_glitch_overlay = TextureRect.new()
+		_glitch_overlay.texture = GLITCH_TEX
+		_glitch_overlay.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		_glitch_overlay.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		_glitch_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+		$Root.add_child(_glitch_overlay)
+	_glitch_overlay.visible = true
+	SFX.play("power_off")
+	_show_betrayed_popup()
+
+func _show_betrayed_popup() -> void:
+	if _betrayed_popup == null:
+		_betrayed_popup = TextureRect.new()
+		_betrayed_popup.texture = BETRAYED_TEX
+		_betrayed_popup.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		_betrayed_popup.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
+		_betrayed_popup.set_anchors_preset(Control.PRESET_CENTER)
+		_betrayed_popup.offset_left = -180
+		_betrayed_popup.offset_top = -80
+		_betrayed_popup.offset_right = 180
+		_betrayed_popup.offset_bottom = 80
+		$Root.add_child(_betrayed_popup)
+	_betrayed_popup.visible = true
+	get_tree().create_timer(2.0).timeout.connect(func() -> void:
+		if _betrayed_popup:
+			_betrayed_popup.visible = false
+		_prompt_home_password())
+
+func _prompt_home_password() -> void:
+	var modal: CanvasLayer = MODAL_PASSWORD.instantiate()
+	add_child(modal)
+	modal.setup("HOME PASSWORD")
+	modal.submitted.connect(func(text: String) -> void:
+		if text.strip_edges() == HOME_PW:
+			SFX.play("password_ok")
+			modal.close()
+			_on_home_password_ok()
+		else:
+			SFX.play("password_wrong")
+			modal.set_status("Access denied. Hint: where the milk lives."))
+
+func _on_home_password_ok() -> void:
+	# Restore monitors + nightvision mode.
+	if _glitch_overlay:
+		_glitch_overlay.visible = false
+	monitors_root.visible = true
 
 func _on_monitor_clicked(monitor: Node) -> void:
 	# Ignore clicks on NO SIGNAL monitors.
@@ -93,11 +152,12 @@ func _apply_phase(p: int) -> void:
 	for m in monitors_root.get_children():
 		if m.has_method("set_live"):
 			m.set_live(all_live or m.always_live)
-		# Green CRT tint on all monitors once blackout starts.
 		m.modulate = Color(0.4, 1.0, 0.5) if night_vision else Color(1, 1, 1)
 	hc_locked.visible = not all_live
 	laptop_locked.visible = not all_live
 	laptop_open_btn.disabled = not all_live
+	if p == Game.Phase.BLACKOUT:
+		_begin_glitch()
 
 func _phase_name(p: int) -> String:
 	match p:

@@ -43,6 +43,7 @@ var _laptop_wrong_tried: bool = false
 
 func _ready() -> void:
 	Game.phase_changed.connect(_on_phase_changed)
+	_show_phase_hint(Game.Phase.PRE_USB)
 	if multiplayer.is_server():
 		var cam := Camera2D.new()
 		cam.name = "HostCam"
@@ -59,6 +60,7 @@ func _ready() -> void:
 		add_child(desk)
 
 func _on_phase_changed(p: int) -> void:
+	_show_phase_hint(p)
 	if p == Game.Phase.FAIL:
 		var fail := FAIL_SCENE.instantiate()
 		add_child(fail)
@@ -89,8 +91,8 @@ func _apply_blackout() -> void:
 	var light := PointLight2D.new()
 	light.name = "BurglarLight"
 	light.texture = _make_radial_light_texture()
-	light.texture_scale = 0.35
-	light.energy = 1.4
+	light.texture_scale = 0.22
+	light.energy = 1.5
 	light.blend_mode = Light2D.BLEND_MODE_ADD
 	burglar.add_child(light)
 
@@ -137,6 +139,7 @@ func _connect_zones() -> void:
 func _on_fridge(_user: Node) -> void:
 	SFX.play("note_pickup")
 	_show_image("FRIDGE", FRIDGE_NOTE_TEX)
+	Hints.show_host("laptop's in the office. type the password you just read.")
 
 func _on_laptop(_user: Node) -> void:
 	if Game.phase >= Game.Phase.POST_USB:
@@ -161,7 +164,7 @@ func _on_laptop(_user: Node) -> void:
 			SFX.play("password_wrong")
 			_laptop_wrong_tried = true
 			modal.set_image(LAPTOP_STATES_TEX, LAPTOP_INPUT_HINT)
-			modal.set_status("Access denied."))
+			modal.set_status("Access denied. Hint: where the milk lives."))
 
 func _on_usb(_user: Node) -> void:
 	if not Game.laptop_unlocked:
@@ -204,7 +207,8 @@ func _on_bookshelf(_user: Node) -> void:
 	img.setup("BOOKSHELF", SHELF_TEX, SHELF_RIGHT, "A brass key tucked between the books.", "Take Key")
 	img.action_pressed.connect(func() -> void:
 		Game.has_key = true
-		SFX.play("note_pickup"))
+		SFX.play("note_pickup")
+		Hints.show_host("key pocketed. bedroom door's unlocked now."))
 
 func _on_bedroom_door(_user: Node, door: Node) -> void:
 	if Game.door_unlocked:
@@ -227,6 +231,20 @@ func _on_exit(_user: Node) -> void:
 
 func _on_zone_stub(_user: Node, zone: Node) -> void:
 	print("[host] interacted: %s (no handler yet)" % zone.label)
+
+func _show_phase_hint(p: int) -> void:
+	match p:
+		Game.Phase.PRE_USB:
+			Hints.show_host("find a laptop. password's hidden somewhere obvious.")
+			Hints.show_client("waiting on the burglar to boot a terminal.")
+		Game.Phase.POST_USB:
+			Hints.show_host("hacker's in. find the safe and crack it.")
+			Hints.show_client("you're online. open the laptop, dig for the safe code.")
+		Game.Phase.BLACKOUT:
+			Hints.show_host("lights out. slip through to the front door.")
+			Hints.show_client("night vision up. call out the dog on your monitors.")
+		Game.Phase.VICTORY, Game.Phase.FAIL:
+			Hints.clear()
 
 func _show_note(title: String, body: String) -> void:
 	var modal: CanvasLayer = MODAL_NOTE.instantiate()

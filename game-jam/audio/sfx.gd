@@ -24,7 +24,7 @@ const SOUNDS := {
 	"door_open":       "PLAYER 1/DOOR OPENING.mp3",
 	"safe_keypad":     "PLAYER 1/SAFE KEYPAY.mp3",
 	"safe_open":       "PLAYER 1/SAFE OPENING AND CLOSING.mp3",
-	"alarm":           "PLAYER 1/ALARM.mp3",
+	"alarm":           "newestalarmsound.mp3",
 	# Dog
 	"dog_bark":        "DOG/SINGLE DOG BARK.mp3",
 	"dog_growl":       "DOG/DOG GROWL.mp3",
@@ -113,9 +113,12 @@ func loop(key: String, name: String, volume_db: float = -8.0) -> void:
 	if not _streams.has(name):
 		return
 	var stream = _streams[name].duplicate()
-	# AudioStreamMP3 / Ogg / Wav all expose `loop` in Godot 4.
+	# MP3/Ogg use `loop`; WAV uses `loop_mode` (0=off, 1=forward).
 	if "loop" in stream:
 		stream.loop = true
+	if "loop_mode" in stream:
+		stream.loop_mode = 1  # AudioStreamWAV.LOOP_FORWARD
+		stream.loop_end = 0  # 0 = full length
 	var player := AudioStreamPlayer.new()
 	player.stream = stream
 	player.volume_db = volume_db
