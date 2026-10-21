@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cueixn1r7feev"
+path="res://.godot/imported/SUCCESS DECRYPT NOISE 2.mp3-2b784be231f56a4d2fc9c5a4391e0952.mp3str"
+
+[deps]
+
+source_file="res://audio/PLAYER 2 CONTROL/SUCCESS DECRYPT NOISE 2.mp3"
+dest_files=["res://.godot/imported/SUCCESS DECRYPT NOISE 2.mp3-2b784be231f56a4d2fc9c5a4391e0952.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

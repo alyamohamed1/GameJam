@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://p0uxxubb56km"
+path="res://.godot/imported/SINGLE DOG BARK.mp3-cdc4dc9f0b3a87898bfe3feacdfaab63.mp3str"
+
+[deps]
+
+source_file="res://audio/DOG/SINGLE DOG BARK.mp3"
+dest_files=["res://.godot/imported/SINGLE DOG BARK.mp3-cdc4dc9f0b3a87898bfe3feacdfaab63.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

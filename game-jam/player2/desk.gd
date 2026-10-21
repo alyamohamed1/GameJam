@@ -4,8 +4,10 @@ extends CanvasLayer
 # button, and the phase readout. Everything client-side: no RPCs from here
 # except Game.request_feeder.
 
-@onready var feeder_btn: Button = $Root/Devices/HBox/FeederBtn
-@onready var phase_label: Label = $Root/Devices/HBox/PhaseLabel
+const FULLSCREEN_SCENE := preload("res://player2/monitor_fullscreen.tscn")
+
+@onready var feeder_btn: Button = $Root/Devices/VBox/FeederBtn
+@onready var phase_label: Label = $Root/Devices/VBox/PhaseLabel
 @onready var monitors_root: Node = $Root/Monitors
 @onready var hc_locked: Control = $Root/HomeComputer/LockedOverlay
 @onready var hc_shift_label: Label = $Root/HomeComputer/VBox/ShiftRow/ShiftLabel
@@ -29,8 +31,21 @@ func _ready() -> void:
 		_change_shift(1))
 	hc_cipher_edit.text_changed.connect(func(_t: String) -> void: _update_cipher_display())
 	Game.phase_changed.connect(_on_phase_changed)
+	for m in monitors_root.get_children():
+		if m.has_signal("clicked"):
+			m.clicked.connect(_on_monitor_clicked)
 	_update_cipher_display()
 	_apply_phase(Game.phase)
+
+func _on_monitor_clicked(monitor: Node) -> void:
+	# Ignore clicks on NO SIGNAL monitors.
+	if not monitor.live:
+		return
+	SFX.play("p2_mouse", -6.0)
+	var fs: CanvasLayer = FULLSCREEN_SCENE.instantiate()
+	fs.room_rect = monitor.room_rect
+	fs.room_label = monitor.room_label
+	add_child(fs)
 
 func _process(_delta: float) -> void:
 	if Game.feeder_cooldown > 0.0:
@@ -72,11 +87,6 @@ func _apply_phase(p: int) -> void:
 		# Green CRT tint on all monitors once blackout starts.
 		m.modulate = Color(0.4, 1.0, 0.5) if night_vision else Color(1, 1, 1)
 	hc_locked.visible = not all_live
-	# Soft static loop while any monitor is still NO SIGNAL.
-	if all_live:
-		SFX.stop_loop("static")
-	else:
-		SFX.loop("static", "p2_static", -22.0)
 
 func _phase_name(p: int) -> String:
 	match p:

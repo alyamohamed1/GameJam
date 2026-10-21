@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://0qh2mqpbk3a5"
+path="res://.godot/imported/DOG SNIFFING.mp3-6c0ca77c7c620a57bc6ebeb4e078b350.mp3str"
+
+[deps]
+
+source_file="res://audio/DOG/DOG SNIFFING.mp3"
+dest_files=["res://.godot/imported/DOG SNIFFING.mp3-6c0ca77c7c620a57bc6ebeb4e078b350.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

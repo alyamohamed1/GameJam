@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://mcr4aiwcvy2y"
+path="res://.godot/imported/KEYBOARD TYPING.mp3-a080ca5b59ca4cf89b492075af490599.mp3str"
+
+[deps]
+
+source_file="res://audio/PLAYER 1/KEYBOARD TYPING.mp3"
+dest_files=["res://.godot/imported/KEYBOARD TYPING.mp3-a080ca5b59ca4cf89b492075af490599.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

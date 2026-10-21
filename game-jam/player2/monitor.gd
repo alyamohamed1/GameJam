@@ -3,6 +3,10 @@ extends Control
 # Camera2D centered on the room. A Polygon2D parent with clip_children
 # masks the viewport texture to the exact shape of the room — trace the
 # polygon in the editor to match the painted room outline.
+# Clicking the monitor emits `clicked` with the Monitor node so the desk
+# can open a semi-fullscreen view.
+
+signal clicked(monitor: Node)
 
 @export var room_rect: Rect2 = Rect2(0, 0, 100, 100)
 @export var room_label: String = ""
@@ -20,6 +24,13 @@ func _ready() -> void:
 	_title.text = room_label
 	_configure_camera()
 	set_live(always_live)
+	# Catch clicks on the whole monitor box.
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	gui_input.connect(_on_gui_input)
+
+func _on_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		clicked.emit(self)
 
 func _configure_camera() -> void:
 	# Zoom so the room fits inside the SubViewport uniformly. Any letterbox

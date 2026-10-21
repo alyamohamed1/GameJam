@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cjqusx7bm4d2"
+path="res://.godot/imported/WOOD RUNNING.mp3-383d4e53ccd17a28887afa940f13c5a6.mp3str"
+
+[deps]
+
+source_file="res://audio/PLAYER 1/WOOD RUNNING.mp3"
+dest_files=["res://.godot/imported/WOOD RUNNING.mp3-383d4e53ccd17a28887afa940f13c5a6.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -1,156 +1,175 @@
-[gd_scene load_steps=4 format=3 uid="uid://deskstage0"]
+[gd_scene format=3 uid="uid://deskstage0"]
 
-[ext_resource type="Script" path="res://player2/desk.gd" id="1_desk"]
+[ext_resource type="Script" uid="uid://c3egqyw6cwlaf" path="res://player2/desk.gd" id="1_desk"]
 [ext_resource type="PackedScene" uid="uid://3fv2i014ns4q" path="res://player2/monitor.tscn" id="2_mon"]
-[ext_resource type="PackedScene" uid="uid://hallwaymon1" path="res://player2/hallway_monitor.tscn" id="3_hall"]
+[ext_resource type="Texture2D" uid="uid://csv24wamb75nn" path="res://art/P2_Monitors.png" id="3_bg"]
 
-[node name="Desk" type="CanvasLayer"]
+[node name="Desk" type="CanvasLayer" unique_id=1869647625]
 layer = 10
 script = ExtResource("1_desk")
 
-[node name="Root" type="Control" parent="."]
+[node name="Root" type="Control" parent="." unique_id=1712147760]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Background" type="TextureRect" parent="Root" unique_id=1985260329]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
+texture = ExtResource("3_bg")
+expand_mode = 1
+stretch_mode = 6
 
-[node name="Background" type="ColorRect" parent="Root"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0.05, 0.05, 0.07, 1)
-mouse_filter = 2
-
-[node name="Monitors" type="Control" parent="Root"]
+[node name="Monitors" type="Control" parent="Root" unique_id=249168025]
+anchors_preset = 0
 offset_right = 480.0
-offset_bottom = 210.0
+offset_bottom = 270.0
 mouse_filter = 2
 
-[node name="Kitchen" parent="Root/Monitors" instance=ExtResource("2_mon")]
-offset_right = 160.0
-offset_bottom = 100.0
+[node name="Kitchen" parent="Root/Monitors" unique_id=1880249531 instance=ExtResource("2_mon")]
+anchors_preset = 0
+offset_left = 91.0
+offset_top = -7.0
+offset_right = 251.0
+offset_bottom = 93.0
+scale = Vector2(0.817763, 0.7941605)
 room_rect = Rect2(10, 10, 520, 370)
-room_label = "KITCHEN (FEEDER)"
+room_label = "KITCHEN"
 always_live = true
 
-[node name="Living" parent="Root/Monitors" instance=ExtResource("2_mon")]
-offset_left = 160.0
-offset_right = 320.0
-offset_bottom = 100.0
+[node name="Living" parent="Root/Monitors" unique_id=2067903139 instance=ExtResource("2_mon")]
+anchors_preset = 0
+offset_left = 240.0
+offset_top = 25.0
+offset_right = 390.0
+offset_bottom = 115.0
 room_rect = Rect2(10, 395, 520, 500)
 room_label = "LIVING"
 
-[node name="Bedroom" parent="Root/Monitors" instance=ExtResource("2_mon")]
-offset_left = 320.0
-offset_right = 480.0
-offset_bottom = 100.0
-room_rect = Rect2(540, 455, 660, 440)
-room_label = "BEDROOM"
-
-[node name="Office" parent="Root/Monitors" instance=ExtResource("2_mon")]
-offset_left = 0.0
-offset_top = 100.0
-offset_right = 160.0
-offset_bottom = 200.0
+[node name="Office" parent="Root/Monitors" unique_id=1515714859 instance=ExtResource("2_mon")]
+anchors_preset = 0
+offset_left = 90.0
+offset_top = 125.0
+offset_right = 230.0
+offset_bottom = 215.0
 room_rect = Rect2(740, 10, 460, 345)
 room_label = "OFFICE"
 
-[node name="Hallway" parent="Root/Monitors" instance=ExtResource("3_hall")]
-offset_left = 160.0
-offset_top = 100.0
-offset_right = 320.0
-offset_bottom = 200.0
-room_rect = Rect2(540, 10, 190, 890)
-room_label = "HALLWAY"
+[node name="Bedroom" parent="Root/Monitors" unique_id=1821377480 instance=ExtResource("2_mon")]
+anchors_preset = 0
+offset_left = 240.0
+offset_top = 125.0
+offset_right = 390.0
+offset_bottom = 215.0
+room_rect = Rect2(540, 455, 660, 440)
+room_label = "BEDROOM"
 
-[node name="HomeComputer" type="Panel" parent="Root"]
-offset_left = 320.0
-offset_top = 100.0
+[node name="HomeComputer" type="Panel" parent="Root" unique_id=801560879]
+layout_mode = 0
+offset_left = 330.0
+offset_top = 175.0
 offset_right = 478.0
-offset_bottom = 200.0
+offset_bottom = 265.0
 
-[node name="VBox" type="VBoxContainer" parent="Root/HomeComputer"]
+[node name="VBox" type="VBoxContainer" parent="Root/HomeComputer" unique_id=892233173]
+layout_mode = 0
 offset_left = 4.0
 offset_top = 4.0
 offset_right = 144.0
-offset_bottom = 196.0
-theme_override_constants/separation = 4
+offset_bottom = 86.0
+theme_override_constants/separation = 2
 
-[node name="Title" type="Label" parent="Root/HomeComputer/VBox"]
-text = "HOME COMPUTER"
+[node name="Title" type="Label" parent="Root/HomeComputer/VBox" unique_id=234384555]
+layout_mode = 2
 theme_override_font_sizes/font_size = 9
+text = "HOME COMPUTER"
 horizontal_alignment = 1
 
-[node name="CipherLabel" type="Label" parent="Root/HomeComputer/VBox"]
-text = "Type cipher from P1:"
-theme_override_font_sizes/font_size = 7
+[node name="CipherLabel" type="Label" parent="Root/HomeComputer/VBox" unique_id=211617505]
 modulate = Color(1, 1, 1, 0.7)
+layout_mode = 2
+theme_override_font_sizes/font_size = 7
+text = "ciphertext:"
 
-[node name="CipherEdit" type="LineEdit" parent="Root/HomeComputer/VBox"]
-placeholder_text = "VHYHQ ..."
+[node name="CipherEdit" type="LineEdit" parent="Root/HomeComputer/VBox" unique_id=825556345]
+layout_mode = 2
 theme_override_font_sizes/font_size = 8
+placeholder_text = "type what P1 reads"
 
-[node name="ShiftRow" type="HBoxContainer" parent="Root/HomeComputer/VBox"]
+[node name="ShiftRow" type="HBoxContainer" parent="Root/HomeComputer/VBox" unique_id=878182323]
+layout_mode = 2
 alignment = 1
 
-[node name="Minus" type="Button" parent="Root/HomeComputer/VBox/ShiftRow"]
+[node name="Minus" type="Button" parent="Root/HomeComputer/VBox/ShiftRow" unique_id=1180028408]
+custom_minimum_size = Vector2(18, 0)
+layout_mode = 2
 text = "-"
-custom_minimum_size = Vector2(20, 0)
 
-[node name="ShiftLabel" type="Label" parent="Root/HomeComputer/VBox/ShiftRow"]
-text = "shift 0"
-theme_override_font_sizes/font_size = 8
+[node name="ShiftLabel" type="Label" parent="Root/HomeComputer/VBox/ShiftRow" unique_id=1083019635]
 custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "shift 0"
 horizontal_alignment = 1
 
-[node name="Plus" type="Button" parent="Root/HomeComputer/VBox/ShiftRow"]
+[node name="Plus" type="Button" parent="Root/HomeComputer/VBox/ShiftRow" unique_id=135010471]
+custom_minimum_size = Vector2(18, 0)
+layout_mode = 2
 text = "+"
-custom_minimum_size = Vector2(20, 0)
 
-[node name="Decoded" type="Label" parent="Root/HomeComputer/VBox"]
-text = "VHYHQ WZR QLQH IRXU"
+[node name="Decoded" type="Label" parent="Root/HomeComputer/VBox" unique_id=458740297]
+modulate = Color(0.7, 1, 0.7, 1)
+layout_mode = 2
 theme_override_font_sizes/font_size = 8
 autowrap_mode = 2
-modulate = Color(0.7, 1, 0.7, 1)
 
-[node name="Hint" type="Label" parent="Root/HomeComputer/VBox"]
-text = "hint: Caesar jumps the fence 3 times."
-theme_override_font_sizes/font_size = 7
-autowrap_mode = 2
-modulate = Color(1, 1, 1, 0.6)
-
-[node name="LockedOverlay" type="Control" parent="Root/HomeComputer"]
+[node name="LockedOverlay" type="Control" parent="Root/HomeComputer" unique_id=873550108]
+anchors_preset = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Bg" type="ColorRect" parent="Root/HomeComputer/LockedOverlay"]
+[node name="Bg" type="ColorRect" parent="Root/HomeComputer/LockedOverlay" unique_id=1308704471]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.02, 0.02, 0.04, 1)
 
-[node name="Label" type="Label" parent="Root/HomeComputer/LockedOverlay"]
+[node name="Label" type="Label" parent="Root/HomeComputer/LockedOverlay" unique_id=1364143518]
+modulate = Color(0.6, 0.6, 0.6, 1)
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 10
 text = "LOCKED"
 horizontal_alignment = 1
 vertical_alignment = 1
-theme_override_font_sizes/font_size = 10
-modulate = Color(0.6, 0.6, 0.6, 1)
 
-[node name="Devices" type="Panel" parent="Root"]
-offset_left = 8.0
-offset_top = 215.0
-offset_right = 472.0
-offset_bottom = 265.0
+[node name="Devices" type="Panel" parent="Root" unique_id=954336684]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 175.0
+offset_right = 160.0
+offset_bottom = 220.0
 
-[node name="HBox" type="HBoxContainer" parent="Root/Devices"]
-offset_left = 8.0
-offset_top = 4.0
-offset_right = 456.0
-offset_bottom = 46.0
+[node name="VBox" type="VBoxContainer" parent="Root/Devices" unique_id=1993122682]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 2.0
+offset_right = 152.0
+offset_bottom = 42.0
 
-[node name="FeederBtn" type="Button" parent="Root/Devices/HBox"]
+[node name="FeederBtn" type="Button" parent="Root/Devices/VBox" unique_id=411904645]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
 text = "Trigger Feeder"
-custom_minimum_size = Vector2(140, 0)
 
-[node name="PhaseLabel" type="Label" parent="Root/Devices/HBox"]
+[node name="PhaseLabel" type="Label" parent="Root/Devices/VBox" unique_id=1232562237]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
 text = "Phase: PRE_USB"
-theme_override_font_sizes/font_size = 10

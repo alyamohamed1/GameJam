@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bnoe7ld7tvcxp"
+path="res://.godot/imported/SAFE OPENING AND CLOSING.mp3-c9ec5a0574fa3e60795a387d50120ac0.mp3str"
+
+[deps]
+
+source_file="res://audio/PLAYER 1/SAFE OPENING AND CLOSING.mp3"
+dest_files=["res://.godot/imported/SAFE OPENING AND CLOSING.mp3-c9ec5a0574fa3e60795a387d50120ac0.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

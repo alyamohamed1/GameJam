@@ -54,6 +54,7 @@ func _load_house() -> void:
 # if a modal was open when FAIL fired).
 @rpc("authority", "call_local", "reliable")
 func restart() -> void:
+	SFX.stop_all()
 	Game.modal_open = false
 	Game.laptop_unlocked = false
 	Game.has_key = false

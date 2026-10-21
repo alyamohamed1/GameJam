@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://w87c1m6hun86"
+path="res://.godot/imported/USB PLUGGING IN.mp3-5d544d02f9b828e599eff9795f736c6e.mp3str"
+
+[deps]
+
+source_file="res://audio/PLAYER 1/USB PLUGGING IN.mp3"
+dest_files=["res://.godot/imported/USB PLUGGING IN.mp3-5d544d02f9b828e599eff9795f736c6e.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

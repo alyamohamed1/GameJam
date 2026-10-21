@@ -42,10 +42,14 @@ func _physics_process(_delta: float) -> void:
 	# Footsteps: random wood step every N seconds while moving; running
 	# triggers them faster (and uses the louder run sample).
 	_step_timer -= _delta
-	if velocity.length() > 1.0:
+	# No steps during game-over / lobby / blackout bootstrap.
+	var active := Game.phase == Game.Phase.PRE_USB \
+		or Game.phase == Game.Phase.POST_USB \
+		or Game.phase == Game.Phase.BLACKOUT
+	if active and velocity.length() > 1.0:
 		if _step_timer <= 0.0:
 			if running:
-				SFX.play("run", -6.0)
+				SFX.play_channel("step", "run", -6.0)
 				_step_timer = STEP_INTERVAL_RUN
 			else:
 				SFX.play_random_step()

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://jim4wpq4awvo"
+path="res://.godot/imported/PLAYER 2 DESKTOP MOUSE CLICK.mp3-82bb58a386a2c54ba8e1a4eecd9b1bfc.mp3str"
+
+[deps]
+
+source_file="res://audio/PLAYER 2 CONTROL/PLAYER 2 DESKTOP MOUSE CLICK.mp3"
+dest_files=["res://.godot/imported/PLAYER 2 DESKTOP MOUSE CLICK.mp3-82bb58a386a2c54ba8e1a4eecd9b1bfc.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

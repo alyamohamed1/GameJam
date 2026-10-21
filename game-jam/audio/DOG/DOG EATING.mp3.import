@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://c55ro566mvtr8"
+path="res://.godot/imported/DOG EATING.mp3-f1cfcbeff7e69428fa15e68f94c895eb.mp3str"
+
+[deps]
+
+source_file="res://audio/DOG/DOG EATING.mp3"
+dest_files=["res://.godot/imported/DOG EATING.mp3-f1cfcbeff7e69428fa15e68f94c895eb.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

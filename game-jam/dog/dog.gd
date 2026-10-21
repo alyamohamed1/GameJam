@@ -13,8 +13,8 @@ extends CharacterBody2D
 
 enum State { PATROL, INVESTIGATE, DISTRACTED, CHASE, SEARCH, ALERT }
 
-const PATROL_SPEED := 45.0
-const CHASE_SPEED := 130.0
+const PATROL_SPEED := 40.0
+const CHASE_SPEED := 110.0
 
 const WAYPOINT_RADIUS := 6.0
 const CATCH_DIST := 20.0
@@ -160,13 +160,19 @@ func _tick_patrol(_delta: float) -> void:
 func _next_patrol_destination() -> void:
 	if patrol_rooms.is_empty():
 		return
-	var room := patrol_rooms[_patrol_index]
-	_patrol_index = (_patrol_index + 1) % patrol_rooms.size()
-	var rect: Rect2 = HouseNav.ROOMS.get(room, Rect2())
-	if rect.size == Vector2.ZERO:
+	# Try up to patrol_rooms.size() times so we skip over blocked rooms
+	# (e.g., Bedroom while its door is still locked) without blocking.
+	for _i in range(patrol_rooms.size()):
+		var room := patrol_rooms[_patrol_index]
+		_patrol_index = (_patrol_index + 1) % patrol_rooms.size()
+		if room == "bedroom" and not Game.door_unlocked:
+			continue
+		var rect: Rect2 = HouseNav.ROOMS.get(room, Rect2())
+		if rect.size == Vector2.ZERO:
+			continue
+		var target: Vector2 = rect.position + rect.size * 0.5
+		_path = HouseNav.find_path(global_position, target)
 		return
-	var target: Vector2 = rect.position + rect.size * 0.5
-	_path = HouseNav.find_path(global_position, target)
 
 func _tick_investigate(delta: float) -> void:
 	_investigate_timer += delta

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://xahjgn4fmuis"
+path="res://.godot/imported/POWER OFF ELECTRICITY LIGHTS.mp3-0d87a0d3929a066f8c453f609e58f71b.mp3str"
+
+[deps]
+
+source_file="res://audio/PLAYER 2 CONTROL/POWER OFF ELECTRICITY LIGHTS.mp3"
+dest_files=["res://.godot/imported/POWER OFF ELECTRICITY LIGHTS.mp3-0d87a0d3929a066f8c453f609e58f71b.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
