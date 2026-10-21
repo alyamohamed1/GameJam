@@ -1,0 +1,86 @@
+[gd_scene format=3 uid="uid://p2lapfull1"]
+
+[ext_resource type="Script" path="res://player2/p2_laptop_fullscreen.gd" id="1_lf"]
+
+[node name="P2LaptopFullscreen" type="CanvasLayer"]
+layer = 25
+script = ExtResource("1_lf")
+
+[node name="Root" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Dim" type="ColorRect" parent="Root"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.75)
+mouse_filter = 1
+
+[node name="Screen" type="TextureRect" parent="Root"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -140.0
+offset_right = 220.0
+offset_bottom = 140.0
+expand_mode = 1
+stretch_mode = 6
+mouse_filter = 2
+
+[node name="BtnSecurity" type="Button" parent="Root/Screen"]
+layout_mode = 1
+anchor_left = 0.085
+anchor_top = 0.117
+anchor_right = 0.202
+anchor_bottom = 0.313
+flat = true
+tooltip_text = "Open Security folder"
+mouse_default_cursor_shape = 2
+
+[node name="BtnPasswords" type="Button" parent="Root/Screen"]
+layout_mode = 1
+anchor_left = 0.436
+anchor_top = 0.195
+anchor_right = 0.566
+anchor_bottom = 0.410
+flat = true
+tooltip_text = "Open passwords.xlsx"
+mouse_default_cursor_shape = 2
+visible = false
+
+[node name="BtnBackSecurity" type="Button" parent="Root/Screen"]
+layout_mode = 1
+anchor_left = 0.045
+anchor_top = 0.08
+anchor_right = 0.12
+anchor_bottom = 0.17
+flat = true
+tooltip_text = "Back"
+mouse_default_cursor_shape = 2
+visible = false
+
+[node name="BtnBackPasswords" type="Button" parent="Root/Screen"]
+layout_mode = 1
+anchor_left = 0.045
+anchor_top = 0.08
+anchor_right = 0.12
+anchor_bottom = 0.17
+flat = true
+tooltip_text = "Back"
+mouse_default_cursor_shape = 2
+visible = false
+
+[node name="CloseBtn" type="Button" parent="Root"]
+layout_mode = 1
+anchor_left = 1.0
+anchor_top = 0.0
+offset_left = -40.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 32.0
+text = "X"
+theme_override_font_sizes/font_size = 12
+mouse_default_cursor_shape = 2
+tooltip_text = "Close laptop"

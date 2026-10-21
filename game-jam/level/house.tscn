@@ -312,7 +312,7 @@ shape = SubResource("RectangleShape2D_5bnpg")
 position = Vector2(600, 10)
 
 [node name="Shape2" type="CollisionShape2D" parent="Walls/SampleWall_TopPerimeter58" unique_id=1607859142]
-position = Vector2(333, 180.5)
+position = Vector2(332, 155)
 shape = SubResource("RectangleShape2D_rc6fj")
 
 [node name="SampleWall_TopPerimeter16" type="StaticBody2D" parent="Walls" unique_id=188024031]
@@ -591,7 +591,7 @@ shape = SubResource("RectangleShape2D_2djua")
 [node name="Zones" type="Node2D" parent="." unique_id=1307927771]
 
 [node name="Fridge" parent="Zones" unique_id=661164327 instance=ExtResource("3_int")]
-position = Vector2(123, 166)
+position = Vector2(132, 184)
 label = "Fridge"
 
 [node name="Feeder" type="Node2D" parent="Zones" unique_id=1097139759 groups=["feeder"]]
@@ -616,15 +616,15 @@ horizontal_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="Bookshelf" parent="Zones" unique_id=558303637 instance=ExtResource("3_int")]
-position = Vector2(138, 410)
+position = Vector2(162, 431)
 label = "Bookshelf"
 
 [node name="Laptop" parent="Zones" unique_id=274670446 instance=ExtResource("3_int")]
-position = Vector2(804, 207)
+position = Vector2(887, 197)
 label = "Laptop"
 
 [node name="UsbPort" parent="Zones" unique_id=1037222484 instance=ExtResource("3_int")]
-position = Vector2(846, 232)
+position = Vector2(921, 198)
 label = "USB Port"
 
 [node name="BedroomDoor" parent="Zones" unique_id=1548158876 instance=ExtResource("5_door")]

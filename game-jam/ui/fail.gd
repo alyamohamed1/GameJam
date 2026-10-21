@@ -3,7 +3,7 @@ extends CanvasLayer
 # Restart button is enabled; pressing it RPCs a reload of the house scene
 # and resets phase to PRE_USB.
 
-@onready var _button: Button = $Root/Panel/VBox/Restart
+@onready var _button: Button = $Root/VBox/Restart
 
 func _ready() -> void:
 	SFX.stop_all()

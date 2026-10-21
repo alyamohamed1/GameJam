@@ -8,6 +8,25 @@ extends Node2D
 const DESK_SCENE := preload("res://player2/desk.tscn")
 const MODAL_NOTE := preload("res://ui/modal_note.tscn")
 const MODAL_PASSWORD := preload("res://ui/modal_password.tscn")
+const MODAL_IMAGE := preload("res://ui/modal_image.tscn")
+const FRIDGE_NOTE_TEX := preload("res://art/fridgenote_inspect.png")
+const SHELF_TEX := preload("res://art/Shelf.png")
+const LAPTOP_STATES_TEX := preload("res://art/P1_laptop_5_states.png")
+
+# Shelf.png is 1774x887, two states side-by-side (887x887 each). Left = no key,
+# Right = with key visible.
+const SHELF_LEFT := Rect2(0, 0, 887, 887)
+const SHELF_RIGHT := Rect2(887, 0, 887, 887)
+
+# P1_laptop_5_states.png is 1536x1024, 3 cols x 2 rows of 512x512 cells.
+const LAPTOP_OFF := Rect2(0, 0, 512, 512)
+const LAPTOP_INPUT := Rect2(512, 0, 512, 512)
+const LAPTOP_INPUT_HINT := Rect2(1024, 0, 512, 512)
+const LAPTOP_DESKTOP := Rect2(0, 512, 512, 512)
+const LAPTOP_GLITCH := Rect2(512, 512, 512, 512)
+
+const MAP_DARK_TEX := preload("res://art/house_dark.png")
+const MAP_NIGHTVISION_TEX := preload("res://art/house_nightvision.png")
 const FAIL_SCENE := preload("res://ui/fail.tscn")
 const FOG_SCENE := preload("res://level/fog.tscn")
 const VICTORY_SCENE := preload("res://ui/victory.tscn")
@@ -19,6 +38,8 @@ const SAFE_CODE := "126"
 
 @onready var zones_root: Node2D = $Zones
 @onready var burglar: Node2D = $Burglar
+
+var _laptop_wrong_tried: bool = false
 
 func _ready() -> void:
 	Game.phase_changed.connect(_on_phase_changed)
@@ -44,9 +65,18 @@ func _on_phase_changed(p: int) -> void:
 	elif p == Game.Phase.VICTORY:
 		var victory := VICTORY_SCENE.instantiate()
 		add_child(victory)
-	elif p == Game.Phase.BLACKOUT and multiplayer.is_server():
-		SFX.play("power_off")
-		_apply_blackout()
+	elif p == Game.Phase.BLACKOUT:
+		if multiplayer.is_server():
+			SFX.play("power_off")
+			_swap_map_texture(MAP_DARK_TEX)
+			_apply_blackout()
+		else:
+			_swap_map_texture(MAP_NIGHTVISION_TEX)
+
+func _swap_map_texture(tex: Texture2D) -> void:
+	var map_node := get_node_or_null("Map") as Sprite2D
+	if map_node:
+		map_node.texture = tex
 
 func _apply_blackout() -> void:
 	# Host-only. Darken the whole canvas with a CanvasModulate and attach a
@@ -59,21 +89,25 @@ func _apply_blackout() -> void:
 	var light := PointLight2D.new()
 	light.name = "BurglarLight"
 	light.texture = _make_radial_light_texture()
-	light.texture_scale = 0.6
-	light.energy = 1.6
+	light.texture_scale = 0.35
+	light.energy = 1.4
+	light.blend_mode = Light2D.BLEND_MODE_ADD
 	burglar.add_child(light)
 
 func _make_radial_light_texture() -> Texture2D:
+	# Smooth radial fade with a soft midpoint so the lit area reads as a
+	# round pool of light instead of a hard square.
 	var grad := Gradient.new()
 	grad.add_point(0.0, Color(1, 1, 1, 1))
+	grad.add_point(0.55, Color(1, 1, 1, 0.45))
 	grad.add_point(1.0, Color(1, 1, 1, 0))
 	var tex := GradientTexture2D.new()
 	tex.gradient = grad
 	tex.fill = GradientTexture2D.FILL_RADIAL
 	tex.fill_from = Vector2(0.5, 0.5)
 	tex.fill_to = Vector2(1.0, 0.5)
-	tex.width = 256
-	tex.height = 256
+	tex.width = 512
+	tex.height = 512
 	return tex
 
 # ---- Puzzle wiring (host only) ----
@@ -102,29 +136,32 @@ func _connect_zones() -> void:
 
 func _on_fridge(_user: Node) -> void:
 	SFX.play("note_pickup")
-	_show_note("FRIDGE", "A sticky note: password is\n\nSchopenhaeur2025")
+	_show_image("FRIDGE", FRIDGE_NOTE_TEX)
 
 func _on_laptop(_user: Node) -> void:
-	# Post-USB: laptop shows the encrypted file so P1 can read it to P2.
 	if Game.phase >= Game.Phase.POST_USB:
-		_show_note("LAPTOP SCREEN",
-			"Encrypted file open on screen:\n\n%s\n\nRead it to the hacker." % CIPHERTEXT)
+		_show_image("LAPTOP", LAPTOP_STATES_TEX, LAPTOP_GLITCH,
+			"Ciphertext: %s   (read to hacker)" % CIPHERTEXT)
 		return
 	if Game.laptop_unlocked:
-		_show_note("HOME LAPTOP", "Logged in. Plug the USB in.")
+		_show_image("LAPTOP", LAPTOP_STATES_TEX, LAPTOP_DESKTOP, "Logged in. Plug the USB in.")
 		return
 	var modal: CanvasLayer = MODAL_PASSWORD.instantiate()
 	add_child(modal)
 	modal.setup("HOME LAPTOP")
+	var region: Rect2 = LAPTOP_INPUT_HINT if _laptop_wrong_tried else LAPTOP_INPUT
+	modal.set_image(LAPTOP_STATES_TEX, region)
 	modal.submitted.connect(func(text: String) -> void:
 		if text.strip_edges().to_lower() == LAPTOP_PASSWORD.to_lower():
 			SFX.play("password_ok")
 			Game.laptop_unlocked = true
 			modal.close()
-			_show_note("HOME LAPTOP", "LOGGED IN. Plug the USB in.")
+			_show_image("LAPTOP", LAPTOP_STATES_TEX, LAPTOP_DESKTOP, "LOGGED IN. Plug the USB in.")
 		else:
 			SFX.play("password_wrong")
-			modal.set_status("Access denied.\nHint: check the fridge."))
+			_laptop_wrong_tried = true
+			modal.set_image(LAPTOP_STATES_TEX, LAPTOP_INPUT_HINT)
+			modal.set_status("Access denied."))
 
 func _on_usb(_user: Node) -> void:
 	if not Game.laptop_unlocked:
@@ -146,7 +183,7 @@ func _on_safe(_user: Node) -> void:
 		return
 	var modal: CanvasLayer = MODAL_PASSWORD.instantiate()
 	add_child(modal)
-	modal.setup("SAFE KEYPAD", "4-digit code", false)
+	modal.setup("SAFE KEYPAD", "3-digit code", false)
 	modal.submitted.connect(func(text: String) -> void:
 		if text.strip_edges() == SAFE_CODE:
 			SFX.play("safe_open")
@@ -160,11 +197,14 @@ func _on_safe(_user: Node) -> void:
 
 func _on_bookshelf(_user: Node) -> void:
 	if Game.has_key:
-		_show_note("BOOKSHELF", "The key is already in your pocket.")
+		_show_image("BOOKSHELF", SHELF_TEX, SHELF_LEFT, "Already searched.")
 		return
-	Game.has_key = true
-	SFX.play("note_pickup")
-	_show_note("BOOKSHELF", "A heavy brass key. You pocketed it.")
+	var img: CanvasLayer = MODAL_IMAGE.instantiate()
+	add_child(img)
+	img.setup("BOOKSHELF", SHELF_TEX, SHELF_RIGHT, "A brass key tucked between the books.", "Take Key")
+	img.action_pressed.connect(func() -> void:
+		Game.has_key = true
+		SFX.play("note_pickup"))
 
 func _on_bedroom_door(_user: Node, door: Node) -> void:
 	if Game.door_unlocked:
@@ -192,3 +232,8 @@ func _show_note(title: String, body: String) -> void:
 	var modal: CanvasLayer = MODAL_NOTE.instantiate()
 	add_child(modal)
 	modal.setup(title, body)
+
+func _show_image(title: String, texture: Texture2D, region: Rect2 = Rect2(), caption: String = "") -> void:
+	var modal: CanvasLayer = MODAL_IMAGE.instantiate()
+	add_child(modal)
+	modal.setup(title, texture, region, caption, "")

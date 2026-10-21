@@ -3,88 +3,69 @@
 [ext_resource type="Script" uid="uid://dpysd58kqhvu" path="res://player2/monitor.gd" id="1_mon"]
 
 [node name="Monitor" type="Control" unique_id=431295209]
-custom_minimum_size = Vector2(160, 100)
 layout_mode = 3
 anchors_preset = 0
-offset_left = 23.0
-offset_top = 5.0
-offset_right = 183.0
-offset_bottom = 105.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
 mouse_filter = 2
+mouse_default_cursor_shape = 2
 script = ExtResource("1_mon")
 
-[node name="Title" type="Label" parent="." unique_id=1987813165]
-layout_mode = 0
-offset_left = 20.479996
-offset_top = 2.0
-offset_right = 128.48
-offset_bottom = 14.0
-theme_override_font_sizes/font_size = 8
-text = "ROOM"
-horizontal_alignment = 1
-
-[node name="Clip" type="Polygon2D" parent="." unique_id=2043950524]
-clip_children = 1
-position = Vector2(-25.520004, 2)
+[node name="BgBehind" type="ColorRect" parent="." unique_id=55512001]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
 color = Color(0, 0, 0, 1)
-polygon = PackedVector2Array(47.020004, 3.540001, 155.0003, 2.5003052, 155.02, 80.04, 47.020004, 80.54, 45.520004, 42.54)
 
-[node name="Container" type="SubViewportContainer" parent="Clip" unique_id=1782462826]
+[node name="Container" type="SubViewportContainer" parent="." unique_id=1782462826]
 texture_filter = 3
-offset_left = 45.0
-offset_top = 2.0
-offset_right = 155.0
-offset_bottom = 81.0
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 mouse_filter = 2
 stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="Clip/Container" unique_id=1214999964]
+[node name="SubViewport" type="SubViewport" parent="Container" unique_id=1214999964]
 handle_input_locally = false
-size = Vector2i(110, 79)
+size = Vector2i(136, 75)
 render_target_update_mode = 4
+transparent_bg = true
 
-[node name="Camera2D" type="Camera2D" parent="Clip/Container/SubViewport" unique_id=915896587]
-position = Vector2(53.479996, 38)
+[node name="Camera2D" type="Camera2D" parent="Container/SubViewport" unique_id=915896587]
+position = Vector2(52, 35)
+
+[node name="Title" type="Label" parent="." unique_id=1987813165]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 1.0
+offset_right = 80.0
+offset_bottom = 10.0
+theme_override_font_sizes/font_size = 7
+text = "ROOM"
 
 [node name="Overlay" type="Control" parent="." unique_id=43086104]
-anchors_preset = 0
-offset_left = 23.479996
-offset_top = 8.0
-offset_right = 127.479996
-offset_bottom = 78.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 mouse_filter = 2
 
 [node name="Bg" type="ColorRect" parent="Overlay" unique_id=1690978651]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = -0.026
-anchor_top = -0.051000003
-anchor_right = 1.019
-anchor_bottom = 1.0710001
-offset_left = 0.040001392
-offset_top = 0.009999752
-offset_right = -0.04801178
-offset_bottom = 0.02999115
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 mouse_filter = 2
 color = Color(0.03, 0.03, 0.04, 1)
 
 [node name="Label" type="Label" parent="Overlay" unique_id=1610304437]
 modulate = Color(0.6, 0.6, 0.6, 1)
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.081
-anchor_top = 0.116000004
-anchor_right = 0.89400005
-anchor_bottom = 0.87100005
-offset_left = -0.024000168
-offset_right = -0.04801178
-offset_bottom = 0.029994965
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 theme_override_font_sizes/font_size = 10
 text = "NO SIGNAL"
 horizontal_alignment = 1

@@ -13,8 +13,8 @@ signal clicked(monitor: Node)
 @export var always_live: bool = false
 
 @onready var _title: Label = $Title
-@onready var _sub_viewport: SubViewport = $Clip/Container/SubViewport
-@onready var _cam: Camera2D = $Clip/Container/SubViewport/Camera2D
+@onready var _sub_viewport: SubViewport = $Container/SubViewport
+@onready var _cam: Camera2D = $Container/SubViewport/Camera2D
 @onready var _overlay: Control = $Overlay
 
 var live: bool = false
@@ -22,11 +22,16 @@ var live: bool = false
 func _ready() -> void:
 	_sub_viewport.world_2d = get_tree().root.world_2d
 	_title.text = room_label
-	_configure_camera()
+	_apply_size()
 	set_live(always_live)
+	resized.connect(_apply_size)
 	# Catch clicks on the whole monitor box.
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	gui_input.connect(_on_gui_input)
+
+func _apply_size() -> void:
+	# SubViewportContainer.stretch=true auto-sizes SubViewport; don't set it.
+	_configure_camera()
 
 func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:

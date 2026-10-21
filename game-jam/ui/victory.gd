@@ -2,8 +2,8 @@ extends CanvasLayer
 # Victory screen. Shown on both peers when phase becomes VICTORY. Only
 # host's Restart button is enabled; pressing it RPCs a reload.
 
-@onready var _time_label: Label = $Root/Panel/VBox/Time
-@onready var _button: Button = $Root/Panel/VBox/Restart
+@onready var _time_label: Label = $Root/VBox/Time
+@onready var _button: Button = $Root/VBox/Restart
 
 func _ready() -> void:
 	SFX.stop_all()

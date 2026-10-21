@@ -43,6 +43,6 @@ autowrap_mode = 2
 theme_override_font_sizes/font_size = 10
 
 [node name="Hint" type="Label" parent="Root/Panel/VBox"]
-text = "[E] / [Esc] close"
+text = "[Esc] close"
 theme_override_font_sizes/font_size = 8
 modulate = Color(1, 1, 1, 0.6)
